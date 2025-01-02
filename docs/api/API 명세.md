@@ -93,6 +93,7 @@
     ```json
     {
       "status": "SUCCESS",
+      "message": "잔액 조회에 성공했습니다.",
       "data": {
         "userId": 123,
         "currentBalance": 15000
@@ -146,6 +147,7 @@
     ```json
     {
       "status": "SUCCESS",
+      "message": "상품 조회에 성공했습니다.",
       "data": [
         {
           "productId": 1,
@@ -189,6 +191,7 @@
     ```json
     {
       "status": "SUCCESS",
+      "message": "상위 상품 조회에 성공했습니다.",
       "data": [
         {
           "productId": 1,
@@ -236,6 +239,7 @@
     ```json
     {
       "status": "SUCCESS",
+      "message": "쿠폰 조회에 성공했습니다.",
       "data": [
         {
           "couponId": 101,
