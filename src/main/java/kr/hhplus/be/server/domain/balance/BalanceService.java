@@ -1,6 +1,5 @@
 package kr.hhplus.be.server.domain.balance;
 
-import kr.hhplus.be.server.domain.user.User;
 import kr.hhplus.be.server.support.ErrorCode;
 import kr.hhplus.be.server.support.HangHeaException;
 import lombok.RequiredArgsConstructor;
