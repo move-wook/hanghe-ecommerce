@@ -72,11 +72,3 @@ CREATE TABLE product_inventory (
                                    stock INT NOT NULL,
                                    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
-
-CREATE TABLE inventory_transactions (
-                                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                                        product_id BIGINT NOT NULL,
-                                        change_amount INT NOT NULL,
-                                        reason VARCHAR(255) NOT NULL,
-                                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
