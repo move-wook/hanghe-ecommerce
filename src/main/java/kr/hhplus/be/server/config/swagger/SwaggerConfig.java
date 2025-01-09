@@ -20,7 +20,23 @@ public class SwaggerConfig {
     private Info apiInfo(){
         return new Info()
                 .title("항해 이커머스 Swagger")
-                .description("충전,쿠폰,주문,결제 API")
+                .description(
+                        """
+                        ### API 기능 소개
+                        - **쿠폰**
+                            - 쿠폰 발급
+                            - 보유 쿠폰 조회
+                        - **잔액**
+                            - 잔액 조회
+                            - 잔액 충전
+                        - **상품**
+                            - 상품 조회
+                            - 상품 목록 조회
+                        - **주문**
+                            - 주문 요청
+                            - 주문 결제 요청
+                        """
+                )
                 .version("1.0.0");
 
     }
