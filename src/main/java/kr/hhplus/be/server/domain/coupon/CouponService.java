@@ -28,35 +28,20 @@ public class CouponService {
     @Transactional
     public IssuedCoupon issueCoupon(long couponId, User user) {
         Coupon coupon = this.findCouponForUpdate(couponId);
-
-        if (!coupon.canIssue()) {
-            throw new HangHeaException(ErrorCode.COUPON_EXPIRED);
-        }
+        //쿠폰 발급처리;
         coupon.incrementIssuedCount();
         couponRepository.save(coupon);
-
+        //쿠폰 발급 저장
         IssuedCoupon issuedCoupon = new IssuedCoupon(user, coupon);
         couponRepository.save(issuedCoupon);  // 발급된 쿠폰 저장
-
         return issuedCoupon; // 발급된 쿠폰 반환
     }
     @Transactional
     public void useCoupon(long issueCouponId, long UserId) {
         // 발급된 쿠폰을 찾아오기
         IssuedCoupon issuedCoupon = this.findByIdAndUserId(issueCouponId, UserId);
-
-        // 쿠폰이 이미 사용된 경우 예외 처리
-        if (issuedCoupon.isUsed()) {
-            throw new HangHeaException(ErrorCode.COUPON_ALREADY_USED);
-        }
-
-        // 쿠폰이 만료된 경우 예외 처리
-        if (issuedCoupon.isExpired()) {
-            throw new HangHeaException(ErrorCode.COUPON_EXPIRED);
-        }
-
         // 쿠폰 사용 처리
-        issuedCoupon.markAsUsed();  // 쿠폰 상태, 시간를 USED로 변경
+        issuedCoupon.markAsUsed();  // 쿠폰 검증 및 사용 처리
         couponRepository.save(issuedCoupon);  // 사용된 쿠폰 업데이트
 
     }

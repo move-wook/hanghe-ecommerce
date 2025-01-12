@@ -2,6 +2,8 @@ package kr.hhplus.be.server.domain.coupon;
 
 import jakarta.persistence.*;
 import kr.hhplus.be.server.domain.user.User;
+import kr.hhplus.be.server.support.ErrorCode;
+import kr.hhplus.be.server.support.HangHeaException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -53,9 +55,15 @@ public class IssuedCoupon {
 
     // 비즈니스 로직
     public void markAsUsed() {
-        if (this.used) {
-            throw new IllegalStateException("Coupon already used");
+        //쿠폰을 이미 사용한 경우
+        if(this.isUsed()){
+            throw new HangHeaException(ErrorCode.COUPON_ALREADY_USED);
         }
+        //쿠폰이 만료된 경우
+        if(this.isExpired()){
+                throw new HangHeaException(ErrorCode.COUPON_EXPIRED);
+        }
+
         this.used = true;
         this.usedAt = LocalDateTime.now();
     }

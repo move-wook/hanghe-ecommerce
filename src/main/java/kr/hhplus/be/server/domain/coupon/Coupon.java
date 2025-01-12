@@ -1,6 +1,8 @@
 package kr.hhplus.be.server.domain.coupon;
 
 import jakarta.persistence.*;
+import kr.hhplus.be.server.support.ErrorCode;
+import kr.hhplus.be.server.support.HangHeaException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -52,14 +54,12 @@ public class Coupon {
         return now.isAfter(validFrom) && now.isBefore(validUntil);
     }
 
-    public boolean canIssue() {
-        return issuedCount < limitCount && isValid();
-    }
-
     public void incrementIssuedCount() {
+        //쿠폰 재고 체크
         if (issuedCount >= limitCount) {
-            throw new IllegalStateException("Coupon limit reached");
+            throw new HangHeaException(ErrorCode.COUPON_EXPIRED);
         }
         this.issuedCount++;
     }
+
 }
