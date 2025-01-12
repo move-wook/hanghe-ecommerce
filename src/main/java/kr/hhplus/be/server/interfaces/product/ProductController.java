@@ -63,7 +63,7 @@ public class ProductController {
 
     @GetMapping("/products/top")
     @Operation(summary = "상위 상품 조회 요청", description = "상위 상품 조회 정보를 조회한다.")
-    public ResponseEntity<Map<String, Object>> getTopProducts(@RequestParam(name = "limit", defaultValue = "3") int limit) {
+    public ResponseEntity<Map<String, Object>> getTopProducts(@RequestParam(name = "limit", defaultValue = "5") int limit) {
         return ResponseBuilder.build(productFacade.getTopProductsBySales(limit),HttpStatus.OK,"상위상품 조회에 성공했습니다.");
     }
 }

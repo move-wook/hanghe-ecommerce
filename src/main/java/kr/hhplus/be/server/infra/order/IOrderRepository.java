@@ -4,11 +4,13 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import kr.hhplus.be.server.domain.order.Order;
 import kr.hhplus.be.server.domain.order.OrderRepository;
+import kr.hhplus.be.server.domain.order.QOrder;
 import kr.hhplus.be.server.domain.order.QOrderItem;
 import kr.hhplus.be.server.domain.product.QProduct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,19 +33,25 @@ public class IOrderRepository implements OrderRepository {
 
     @Override
     public List<ProductTopResult> findTopSellingProducts(int limit) {
-            QOrderItem orderItem = QOrderItem.orderItem;
-            QProduct product = QProduct.product;
-            return queryFactory.select(Projections.constructor(
-                            ProductTopResult.class,
-                            product.id,
+        QOrderItem orderItem = QOrderItem.orderItem;
+        QProduct product = QProduct.product;
+        QOrder order = QOrder.order; // 주문 날짜 필드가 포함된 엔티티
+
+        LocalDateTime threeDaysAgo = LocalDateTime.now().minusDays(3);
+
+        return queryFactory.select(Projections.constructor(
+                        ProductTopResult.class,
+                        product.id,
                         product.name,
                         orderItem.quantity.sum().as("totalSold")
                 ))
                 .from(orderItem)
                 .join(orderItem.product, product)
+                .join(orderItem.order, order) // 주문 테이블 조인
+                .where(order.createdAt.after(threeDaysAgo)) // 최근 3일 조건 추가
                 .groupBy(product.id, product.name)
                 .orderBy(orderItem.quantity.sum().desc())
-                .limit(limit)
+                .limit(limit) // 상위 5개 제한
                 .fetch();
     }
 
