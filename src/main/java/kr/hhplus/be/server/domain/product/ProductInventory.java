@@ -1,6 +1,8 @@
 package kr.hhplus.be.server.domain.product;
 
 import jakarta.persistence.*;
+import kr.hhplus.be.server.support.ErrorCode;
+import kr.hhplus.be.server.support.HangHeaException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -40,20 +42,9 @@ public class ProductInventory {
         this.lastUpdated = LocalDateTime.now();
     }
 
-    // 비즈니스 로직
-    public void addStock(int amount) {
-        if (amount < 0) {
-            throw new IllegalArgumentException("Quantity to add cannot be negative");
-        }
-        this.stock += amount;
-    }
-
     public void subtractStock(long quantity) {
-        if (quantity < 0) {
-            throw new IllegalArgumentException("Quantity to subtract cannot be negative");
-        }
         if (this.stock < quantity) {
-            throw new IllegalStateException("Not enough stock available");
+            throw new HangHeaException(ErrorCode.INSUFFICIENT_STOCK);
         }
         this.stock -= quantity;
     }
