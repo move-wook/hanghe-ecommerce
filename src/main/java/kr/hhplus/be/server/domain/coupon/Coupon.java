@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "coupon")
@@ -61,5 +62,14 @@ public class Coupon {
         }
         this.issuedCount++;
     }
+
+    public String getFormattedValidUntil() {
+        return validUntil != null
+                ? validUntil.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                : "N/A";
+    }
+
+
+
 
 }

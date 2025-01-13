@@ -1,6 +1,5 @@
 package kr.hhplus.be.server.facade;
 
-import jakarta.validation.constraints.NotNull;
 import kr.hhplus.be.server.domain.coupon.Coupon;
 import kr.hhplus.be.server.domain.coupon.CouponService;
 import kr.hhplus.be.server.domain.coupon.IssuedCoupon;
@@ -12,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,33 +35,23 @@ public class CouponFacade {
     public List<CouponResponse.CouponRegisterV1> getUserCoupons(long userId) {
         User user = userService.getUserById(userId);
         List<IssuedCoupon> coupons =  couponService.getByUserId(user);
-        return coupons.stream()
-                .map(this::setCouponRegisterV1)
+        return toCouponRegisterV1List(coupons);
+    }
+    private List<CouponResponse.CouponRegisterV1> toCouponRegisterV1List(List<IssuedCoupon> issuedCoupons) {
+        return issuedCoupons.stream()
+                .map(this::toCouponRegisterV1)
                 .collect(Collectors.toList());
     }
 
-    private CouponResponse.CouponRegisterV1 setCouponRegisterV1(IssuedCoupon issuedCoupon) {
-        return getCouponRegisterV1(issuedCoupon);
+    private CouponResponse.CouponRegisterV1 toCouponRegisterV1(IssuedCoupon issuedCoupon) {
+        Coupon coupon = issuedCoupon.getNonNullCoupon();
 
-    }
-
-    @NotNull
-    static CouponResponse.CouponRegisterV1 getCouponRegisterV1(IssuedCoupon issuedCoupon) {
-        Coupon coupon = issuedCoupon.getCoupon();
-
-        if (coupon == null) {
-            throw new IllegalStateException("Coupon not found for IssuedCoupon ID: " + issuedCoupon.getId());
-        }
-
-        String status = issuedCoupon.isUsed() ? "USED" : "UNUSED";
-        String validUntil = coupon.getValidUntil() != null
-                ? coupon.getValidUntil().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                : "N/A";
-
-        return new CouponResponse.CouponRegisterV1(coupon.getId(),
+        return new CouponResponse.CouponRegisterV1(
+                issuedCoupon.getId(),
                 coupon.getName(),
-                status,
-                validUntil);
+                issuedCoupon.getStatus(),
+                coupon.getFormattedValidUntil()
+        );
     }
 
 

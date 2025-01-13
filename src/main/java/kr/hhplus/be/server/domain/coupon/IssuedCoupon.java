@@ -71,4 +71,16 @@ public class IssuedCoupon {
     public boolean isExpired() {
         return !coupon.isValid();
     }
+
+    public String getStatus() {
+        return used ? "USED" : "UNUSED";
+    }
+    // Coupon이 null일 경우 예외를 던지는 메서드
+    public Coupon getNonNullCoupon() {
+        if (coupon == null) {
+            throw new HangHeaException(ErrorCode.INVALID_COUPON);
+        }
+        return coupon;
+    }
+
 }
