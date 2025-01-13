@@ -4,18 +4,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.hhplus.be.server.facade.CouponFacade;
-import kr.hhplus.be.server.interfaces.balance.BalanceRequest;
-import kr.hhplus.be.server.support.ResponseBuilder;
+import kr.hhplus.be.server.support.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import java.util.List;
 
 @RequestMapping("/api/v1")
 @RestController
@@ -32,14 +27,13 @@ public class CouponController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "쿠폰 목록 조회 성공",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ResponseEntity.class))),
+                                    schema = @Schema(implementation = CouponResponse.CouponRegisterV1.class))),
                     @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음",
                             content = @Content(mediaType = "application/json"))
             }
     )
-    public ResponseEntity<Map<String, Object>> getUserCoupons(@PathVariable(name="userId") long userId) {
-        return ResponseBuilder.build(couponFacade.getUserCoupons(userId),
-         HttpStatus.OK, "쿠폰 조회에 성공했습니다.");
+    public CustomApiResponse<List<CouponResponse.CouponRegisterV1>>getUserCoupons(@PathVariable(name="userId") long userId) {
+        return CustomApiResponse.ok(couponFacade.getUserCoupons(userId), "쿠폰 목록 조회에 성공했습니다.");
     }
 
     @PostMapping("/coupons/issue")
@@ -54,13 +48,12 @@ public class CouponController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "쿠폰 발급 성공",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ResponseEntity.class))),
+                                    schema = @Schema(implementation = CouponResponse.IssuedCouponRegisterV1.class))),
                     @ApiResponse(responseCode = "400", description = "잘못된 요청",
                             content = @Content(mediaType = "application/json"))
             }
     )
-    public ResponseEntity<Map<String, Object>> issueCoupon(@RequestBody CouponRequest.CouponRegisterV1 couponRequest) {
-
-        return ResponseBuilder.build(couponFacade.issueCoupon(couponRequest), HttpStatus.OK, "쿠폰 발급에 성공했습니다.");
+    public CustomApiResponse<CouponResponse.IssuedCouponRegisterV1> issueCoupon(@RequestBody CouponRequest.CouponRegisterV1 couponRequest) {
+        return CustomApiResponse.ok(couponFacade.issueCoupon(couponRequest), "쿠폰 발급에 성공했습니다.");
     }
 }

@@ -7,13 +7,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.hhplus.be.server.facade.BalanceFacade;
-import kr.hhplus.be.server.support.ResponseBuilder;
+import kr.hhplus.be.server.support.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RequestMapping("/api/v1")
 @RestController
@@ -29,15 +26,15 @@ public class BalanceController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "잔액 조회 성공",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ResponseEntity.class))),
+                                    schema = @Schema(implementation = BalanceResponse.BalanceRegisterV1.class))),
                     @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음",
                             content = @Content(mediaType = "application/json"))
             }
     )
     @GetMapping("/balances/{userId}")
     @Parameter(name = "userId", description = "사용자 ID", example = "1")
-    public ResponseEntity<Map<String, Object>> getUserBalance(@PathVariable (name="userId") long userId) {
-        return ResponseBuilder.build(balanceFacade.getUserBalance(userId), HttpStatus.OK, "잔액 조회에 성공했습니다.");
+    public CustomApiResponse<BalanceResponse.BalanceRegisterV1> getUserBalance(@PathVariable (name="userId") long userId) {
+        return CustomApiResponse.ok(balanceFacade.getUserBalance(userId), "잔액 조회에 성공했습니다.");
     }
 
     @Operation(
@@ -57,8 +54,7 @@ public class BalanceController {
             }
     )
     @PostMapping("/balance/charge")
-    public ResponseEntity<Map<String, Object>> chargeBalance(@RequestBody BalanceRequest.BalanceRegisterV1 balanceRequest) {
-        ;
-        return ResponseBuilder.build(balanceFacade.charge(balanceRequest), HttpStatus.OK, "잔액 충전 성공");
+    public CustomApiResponse<BalanceResponse.BalanceRegisterV2> chargeBalance(@RequestBody BalanceRequest.BalanceRegisterV1 balanceRequest) {
+        return CustomApiResponse.ok(balanceFacade.charge(balanceRequest),  "잔액 충전 성공");
     }
 }
