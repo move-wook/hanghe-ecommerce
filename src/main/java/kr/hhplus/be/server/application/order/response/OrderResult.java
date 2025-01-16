@@ -1,5 +1,5 @@
-package kr.hhplus.be.server.interfaces.order;
+package kr.hhplus.be.server.application.order.response;
 
-public class OrderResponse {
+public class OrderResult {
     public record OrderRegisterV1(long orderId, long totalPrice, String status){}
 }

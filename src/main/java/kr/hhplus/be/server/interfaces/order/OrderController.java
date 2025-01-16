@@ -2,7 +2,9 @@ package kr.hhplus.be.server.interfaces.order;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kr.hhplus.be.server.facade.OrderFacade;
+import kr.hhplus.be.server.application.order.OrderFacade;
+import kr.hhplus.be.server.application.order.request.OrderInfo;
+import kr.hhplus.be.server.application.order.response.OrderResult;
 import kr.hhplus.be.server.support.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +22,7 @@ public class OrderController {
 
     @PostMapping("/orders")
     @Operation(summary = "주문 요청", description = "사용자 주문 요청")
-    public CustomApiResponse<OrderResponse.OrderRegisterV1> createOrder(@RequestBody OrderRequest.OrderRegisterV1 orderRequest) {
+    public CustomApiResponse<OrderResult.OrderRegisterV1> createOrder(@RequestBody OrderInfo.OrderRegisterV1 orderRequest) {
         return CustomApiResponse.ok(orderFacade.createOrder(orderRequest), "주문 생성에 성공했습니다.");
     }
 }

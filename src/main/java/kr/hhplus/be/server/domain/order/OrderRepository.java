@@ -11,4 +11,8 @@ public interface OrderRepository {
     Optional<Order> findOrderForUpdate(long orderId);
 
     List<ProductTopResult> findTopSellingProducts(int limit);
+
+    List<OrderItem>  findByOrderId(Long id);
+
+    void saveAll(List<OrderItem> orderList);
 }

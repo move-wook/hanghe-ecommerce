@@ -2,10 +2,7 @@ package kr.hhplus.be.server.infra.order;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import kr.hhplus.be.server.domain.order.Order;
-import kr.hhplus.be.server.domain.order.OrderRepository;
-import kr.hhplus.be.server.domain.order.QOrder;
-import kr.hhplus.be.server.domain.order.QOrderItem;
+import kr.hhplus.be.server.domain.order.*;
 import kr.hhplus.be.server.domain.product.QProduct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -19,6 +16,7 @@ import java.util.Optional;
 public class IOrderRepository implements OrderRepository {
 
     private final JpaOrderRepository jpaOrderRepository;
+    private final JpaOrderItemRepository jpaOrderItemRepository;
     private final JPAQueryFactory queryFactory;
 
     @Override
@@ -46,13 +44,23 @@ public class IOrderRepository implements OrderRepository {
                         orderItem.quantity.sum().as("totalSold")
                 ))
                 .from(orderItem)
-                .join(orderItem.product, product)
-                .join(orderItem.order, order) // 주문 테이블 조인
+                .join(product).on(orderItem.productId.eq(product.id)) // FK로 조인
+                .join(order).on(orderItem.orderId.eq(order.id)) // FK로 조인
                 .where(order.createdAt.after(threeDaysAgo)) // 최근 3일 조건 추가
                 .groupBy(product.id, product.name)
                 .orderBy(orderItem.quantity.sum().desc())
                 .limit(limit) // 상위 5개 제한
                 .fetch();
+    }
+
+    @Override
+    public List<OrderItem> findByOrderId(Long id) {
+        return jpaOrderItemRepository.findByOrderId(id);
+    }
+
+    @Override
+    public void saveAll(List<OrderItem> orderList) {
+        jpaOrderItemRepository.saveAll(orderList);
     }
 
 }
