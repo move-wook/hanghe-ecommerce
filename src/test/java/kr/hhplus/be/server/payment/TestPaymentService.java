@@ -36,7 +36,7 @@ public class TestPaymentService {
         doNothing().when(paymentRepository).save(payment);
 
         // When
-        paymentService.save(payment);
+        paymentService.createPayment(payment);
 
         // Then
         verify(paymentRepository, times(1)).save(payment);

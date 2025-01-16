@@ -10,6 +10,7 @@ import kr.hhplus.be.server.support.HangHeaException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.Copy;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -36,18 +37,20 @@ public class TestCouponService {
     @DisplayName("사용자 id로 쿠폰 발급 목록을 조회한다.")
     void shouldReturnCouponsForUser() {
         // Given
+        long userId = 1L;
+        long userCouponId = 1L;
         User user = User.builder().id(1L).build();
 
-        IssuedCoupon issuedCoupon = new IssuedCoupon(user, new Coupon());
+        IssuedCoupon issuedCoupon = new IssuedCoupon(userId, userCouponId);
 
         when(couponRepository.findAllByUserId(user.getId())).thenReturn(Optional.of(Collections.singletonList(issuedCoupon)));
 
         // When
-        List<IssuedCoupon> result = couponService.getByUserId(user);
+        List<IssuedCoupon> result = couponService.getByUserId(user.getId());
 
         // Then
         assertThat(result).isNotEmpty();
-        assertThat(result.get(0).getUser().getId()).isEqualTo(user.getId());
+        assertThat(result.get(0).getUserId()).isEqualTo(user.getId());
     }
 
     @Test
@@ -59,7 +62,7 @@ public class TestCouponService {
 
         // When & Then
         HangHeaException exception = assertThrows(HangHeaException.class, () -> {
-            couponService.getByUserId(user);
+            couponService.getByUserId(user.getId());
         });
 
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.NOT_FOUND_USER_COUPON);
@@ -127,8 +130,8 @@ public class TestCouponService {
 
         // Then
         assertThat(result).isNotNull();
-        assertThat(result.getUser()).isEqualTo(user);
-        assertThat(result.getCoupon()).isEqualTo(coupon);
+        assertThat(result.getUserId()).isEqualTo(user.getId());
+        assertThat(result.getCouponId()).isEqualTo(coupon.getId());
 
 
     }
@@ -160,7 +163,7 @@ public class TestCouponService {
 
     @Test
     @DisplayName("쿠폰을 정상적으로 사용 처리한다.")
-    void shouldUseCouponSuccessfully() {
+    void shouldCouponSuccessfully() {
         // Given
         long issueCouponId = 1L;
         long userId = 1L;
@@ -171,10 +174,10 @@ public class TestCouponService {
                 .validFrom(LocalDateTime.now().minusDays(1))
                 .validUntil(LocalDateTime.now().plusDays(1))
                 .build();
-        IssuedCoupon issuedCoupon = IssuedCoupon.builder().coupon(coupon)
+        IssuedCoupon issuedCoupon = IssuedCoupon.builder().couponId(coupon.getId())
                         .used(false).build();
         when(couponRepository.findByIdAndUserId(issueCouponId, userId)).thenReturn(Optional.of(issuedCoupon));
-
+        when(couponRepository.findByCouponId(issuedCoupon.getCouponId())).thenReturn(Optional.of(coupon));
         // When
         couponService.useCoupon(issueCouponId, userId);
 
@@ -184,14 +187,37 @@ public class TestCouponService {
     }
 
     @Test
+    @DisplayName("쿠폰 ID 쿠폰 정보을 조회한다.")
+    void shouldReturnCoupon() {
+        // Given
+        long couponId = 1L;
+        Coupon coupon = Coupon.builder()
+                .id(1L)
+                .issuedCount(1)
+                .limitCount(10)
+                .validFrom(LocalDateTime.now().minusDays(1))
+                .validUntil(LocalDateTime.now().plusDays(1))
+                .build();
+        when(couponRepository.findByCouponId(couponId)).thenReturn(Optional.of(coupon));
+        // When
+       Coupon result = couponService.findByCouponId(couponId);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(couponId);
+    }
+
+    @Test
     @DisplayName("이미 상용된 쿠폰에 대해 HangHeaException 예외를 발생 시킨다.")
     void shouldThrowExceptionWhenUsingAlreadyUsedCoupon() {
         // Given
         long issueCouponId = 1L;
         long userId = 1L;
-        IssuedCoupon issuedCoupon = IssuedCoupon.builder()
+        IssuedCoupon issuedCoupon = IssuedCoupon.builder().couponId(issueCouponId)
                 .used(true).build();
+        Coupon coupon = Coupon.builder().id(1L).build();
         when(couponRepository.findByIdAndUserId(issueCouponId, userId)).thenReturn(Optional.of(issuedCoupon));
+        when(couponRepository.findByCouponId(issuedCoupon.getCouponId())).thenReturn(Optional.of(coupon));
 
         // When & Then
         HangHeaException exception = assertThrows(HangHeaException.class, () -> {

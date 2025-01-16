@@ -78,7 +78,7 @@ public class TestProductService {
         // Given
         long productId = 1L;
         ProductInventory mockInventory = ProductInventory.builder()
-                .product(Product.builder().id(productId).build())
+                .productId(productId)
                 .id(productId)
                 .stock(100)
                 .build();
@@ -89,7 +89,7 @@ public class TestProductService {
 
         // Then
         assertThat(result).isNotNull();
-        assertThat(result.getProduct().getId()).isEqualTo(productId);
+        assertThat(result.getProductId()).isEqualTo(productId);
         assertThat(result.getId()).isEqualTo(productId);
         assertThat(result.getStock()).isEqualTo(100);
 
@@ -103,7 +103,7 @@ public class TestProductService {
         long quantity = 10;
 
         ProductInventory mockInventory = ProductInventory.builder()
-                .product(Product.builder().id(productId).build())
+                .productId(productId)
                 .id(productId)
                 .stock(100)
                 .build();

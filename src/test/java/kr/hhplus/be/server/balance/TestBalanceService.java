@@ -32,12 +32,10 @@ public class TestBalanceService {
     @DisplayName("특정 사용자의 ID로 현재 잔액을 조회한다.")
     void shouldFindUserBalanceById() {
         long userId = 1L;
-        User user = User.builder()
-                .id(userId)
-                .userName("임동욱").build();
+
         UserBalance userBalance = UserBalance.builder()
                 .id(1L)
-                .user(user)
+                .userId(userId)
                 .currentBalance(BigDecimal.valueOf(1000))
                 .build();
 
@@ -45,7 +43,7 @@ public class TestBalanceService {
 
         UserBalance result = balanceService.getByUserId(userId);
 
-        assertThat(userId).isEqualTo(result.getUser().getId());
+        assertThat(userId).isEqualTo(result.getUserId());
         assertThat(BigDecimal.valueOf(1000)).isEqualTo(result.getCurrentBalance());
     }
 
@@ -74,12 +72,10 @@ public class TestBalanceService {
     @DisplayName("특정 사용자의 ID로 현재 잔액을 조회한다.")
     void findBalanceForUpdate() {
         long userId = 1L;
-        User user = User.builder()
-                .id(userId)
-                .userName("임동욱").build();
+
         UserBalance userBalance = UserBalance.builder()
                 .id(1L)
-                .user(user)
+                .userId(userId)
                 .currentBalance(BigDecimal.valueOf(1000))
                 .build();
 
@@ -87,7 +83,7 @@ public class TestBalanceService {
 
         UserBalance result = balanceService.findBalanceForUpdate(userId);
 
-        assertThat(userId).isEqualTo(result.getUser().getId());
+        assertThat(userId).isEqualTo(result.getUserId());
         assertThat(BigDecimal.valueOf(1000)).isEqualTo(result.getCurrentBalance());
     }
 
@@ -95,12 +91,10 @@ public class TestBalanceService {
     @DisplayName("특정 사용자의 잔액을 충전 시킨다.")
     void updateBalance(){
         long userId = 1L;
-        User user = User.builder()
-                .id(userId)
-                .userName("임동욱").build();
+
         UserBalance userBalance = UserBalance.builder()
                 .id(1L)
-                .user(user)
+                .userId(userId)
                 .currentBalance(BigDecimal.valueOf(1000))
                 .build();
 
@@ -117,12 +111,11 @@ public class TestBalanceService {
     @DisplayName("유효하지 않은 잔액을 충전하면 HangHeaException 예외를 발생시킨다.")
     void throwExceptionWhenAmountIsNegativeOrZero() {
         // Given
-        User user = User.builder()
-                .id(1L)
-                .userName("임동욱").build();
+        long userId = 1L;
+
         UserBalance userBalance = UserBalance.builder()
                 .id(1L)
-                .user(user)
+                .userId(userId)
                 .currentBalance(BigDecimal.valueOf(1000))
                 .build();
 
@@ -149,12 +142,9 @@ public class TestBalanceService {
         BigDecimal initialBalance = BigDecimal.valueOf(1000);
         BigDecimal deductionAmount = BigDecimal.valueOf(500);
 
-        User user = User.builder()
-                .id(userId)
-                .userName("임동욱").build();
         UserBalance userBalance = UserBalance.builder()
                 .id(1L)
-                .user(user)
+                .userId(userId)
                 .currentBalance(initialBalance)
                 .build();
 
@@ -180,7 +170,7 @@ public class TestBalanceService {
                 .userName("임동욱").build();
         UserBalance userBalance = UserBalance.builder()
                 .id(1L)
-                .user(user)
+                .userId(userId)
                 .currentBalance(initialBalance)
                 .build();
 
