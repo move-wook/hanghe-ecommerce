@@ -7,7 +7,6 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
-import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -18,40 +17,28 @@ public class QOrderItem extends EntityPathBase<OrderItem> {
 
     private static final long serialVersionUID = 572731780L;
 
-    private static final PathInits INITS = PathInits.DIRECT2;
-
     public static final QOrderItem orderItem = new QOrderItem("orderItem");
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final QOrder order;
+    public final NumberPath<Long> orderId = createNumber("orderId", Long.class);
 
     public final NumberPath<java.math.BigDecimal> price = createNumber("price", java.math.BigDecimal.class);
 
-    public final kr.hhplus.be.server.domain.product.QProduct product;
+    public final NumberPath<Long> productId = createNumber("productId", Long.class);
 
     public final NumberPath<Long> quantity = createNumber("quantity", Long.class);
 
     public QOrderItem(String variable) {
-        this(OrderItem.class, forVariable(variable), INITS);
+        super(OrderItem.class, forVariable(variable));
     }
 
     public QOrderItem(Path<? extends OrderItem> path) {
-        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
+        super(path.getType(), path.getMetadata());
     }
 
     public QOrderItem(PathMetadata metadata) {
-        this(metadata, PathInits.getFor(metadata, INITS));
-    }
-
-    public QOrderItem(PathMetadata metadata, PathInits inits) {
-        this(OrderItem.class, metadata, inits);
-    }
-
-    public QOrderItem(Class<? extends OrderItem> type, PathMetadata metadata, PathInits inits) {
-        super(type, metadata, inits);
-        this.order = inits.isInitialized("order") ? new QOrder(forProperty("order"), inits.get("order")) : null;
-        this.product = inits.isInitialized("product") ? new kr.hhplus.be.server.domain.product.QProduct(forProperty("product"), inits.get("product")) : null;
+        super(OrderItem.class, metadata);
     }
 
 }

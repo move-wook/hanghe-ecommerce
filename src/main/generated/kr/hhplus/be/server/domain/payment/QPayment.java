@@ -7,7 +7,6 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
-import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -18,8 +17,6 @@ public class QPayment extends EntityPathBase<Payment> {
 
     private static final long serialVersionUID = 2064058049L;
 
-    private static final PathInits INITS = PathInits.DIRECT2;
-
     public static final QPayment payment = new QPayment("payment");
 
     public final NumberPath<java.math.BigDecimal> amount = createNumber("amount", java.math.BigDecimal.class);
@@ -28,32 +25,22 @@ public class QPayment extends EntityPathBase<Payment> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final kr.hhplus.be.server.domain.order.QOrder order;
+    public final NumberPath<Long> orderId = createNumber("orderId", Long.class);
 
     public final StringPath status = createString("status");
 
-    public final kr.hhplus.be.server.domain.user.QUser user;
+    public final NumberPath<Long> userId = createNumber("userId", Long.class);
 
     public QPayment(String variable) {
-        this(Payment.class, forVariable(variable), INITS);
+        super(Payment.class, forVariable(variable));
     }
 
     public QPayment(Path<? extends Payment> path) {
-        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
+        super(path.getType(), path.getMetadata());
     }
 
     public QPayment(PathMetadata metadata) {
-        this(metadata, PathInits.getFor(metadata, INITS));
-    }
-
-    public QPayment(PathMetadata metadata, PathInits inits) {
-        this(Payment.class, metadata, inits);
-    }
-
-    public QPayment(Class<? extends Payment> type, PathMetadata metadata, PathInits inits) {
-        super(type, metadata, inits);
-        this.order = inits.isInitialized("order") ? new kr.hhplus.be.server.domain.order.QOrder(forProperty("order"), inits.get("order")) : null;
-        this.user = inits.isInitialized("user") ? new kr.hhplus.be.server.domain.user.QUser(forProperty("user")) : null;
+        super(Payment.class, metadata);
     }
 
 }
