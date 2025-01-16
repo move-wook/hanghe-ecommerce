@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.domain.balance;
 
 import jakarta.persistence.*;
-import kr.hhplus.be.server.domain.user.User;
 import kr.hhplus.be.server.support.ErrorCode;
 import kr.hhplus.be.server.support.HangHeaException;
 import lombok.AllArgsConstructor;
@@ -24,14 +23,13 @@ public class UserBalance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(nullable = false)
+    private Long userId;
 
-    @Column(name = "current_balance", nullable = false)
+    @Column(nullable = false)
     private BigDecimal currentBalance = BigDecimal.ZERO;
 
-    @Column(name = "last_updated", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime lastUpdated;
 
     // 수정 시점 업데이트
