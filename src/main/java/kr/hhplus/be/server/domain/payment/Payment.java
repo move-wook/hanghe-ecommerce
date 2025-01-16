@@ -23,13 +23,11 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "order_id", nullable = false)
-    private Order order;
+    @Column(nullable = false)
+    private Long orderId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(nullable = false)
+    private Long userId;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
@@ -41,9 +39,9 @@ public class Payment {
     private LocalDateTime createdAt;
 
     // 생성자
-    public Payment(Order order, User user, BigDecimal amount, String status) {
-        this.order = order;
-        this.user = user;
+    public Payment(Long orderId, Long userId, BigDecimal amount, String status) {
+        this.orderId = orderId;
+        this.userId = userId;
         this.amount = amount;
         this.status = status;
         this.createdAt = LocalDateTime.now(); // 생성 시점 자동 설정

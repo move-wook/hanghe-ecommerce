@@ -2,7 +2,9 @@ package kr.hhplus.be.server.interfaces.payment;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kr.hhplus.be.server.facade.PaymentFacade;
+import kr.hhplus.be.server.application.payment.PaymentFacade;
+import kr.hhplus.be.server.application.payment.request.PaymentInfo;
+import kr.hhplus.be.server.application.payment.response.PaymentResult;
 import kr.hhplus.be.server.support.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +22,7 @@ public class PaymentController {
 
     @Operation(summary = "결제 요청", description = "사용자 특정 주문에 대한 결제를 요청")
     @PostMapping("/payments")
-    public CustomApiResponse<PaymentResponse.PaymentRegisterV1> processPayment(@RequestBody PaymentRequest.PaymentRegisterV1  paymentRequest) {
+    public CustomApiResponse<PaymentResult.PaymentRegisterV1> processPayment(@RequestBody PaymentInfo.PaymentRegisterV1  paymentRequest){
         return CustomApiResponse.ok(paymentFacade.processPayment(paymentRequest),"결제에 성공했습니다.");
     }
 }

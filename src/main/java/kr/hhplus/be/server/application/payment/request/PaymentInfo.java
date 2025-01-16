@@ -1,5 +1,5 @@
-package kr.hhplus.be.server.interfaces.payment;
+package kr.hhplus.be.server.application.payment.request;
 
-public class PaymentRequest {
+public class PaymentInfo {
     public record PaymentRegisterV1(long orderId, long userId, long issuedCouponId) {}
 }
