@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Slf4j
@@ -57,24 +58,27 @@ public class PaymentFacade {
         // 할인 금액 적용
         Coupon coupon = couponService.findByCouponId(issuedCoupon.getCouponId());
 
-        BigDecimal discountAmount = coupon.getDiscountValue();
+        BigDecimal discountMultiplier = BigDecimal.valueOf(100).subtract(coupon.getDiscountValue())
+                .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
 
-        totalAmount = totalAmount.subtract(discountAmount);  // 할인 금액 차감
+        BigDecimal discountAmount = totalAmount
+                .multiply(discountMultiplier).setScale(2, RoundingMode.HALF_UP);
+
         // 잔액 차감
-        balanceService.deductBalance(user.getId(), totalAmount);
+        balanceService.deductBalance(user.getId(), discountAmount);
         // 6. 주문 상태 업데이트
         orderService.updateStatus(order);  // 주문 저장
         //결제 객체 생성
         Payment payment = new Payment(
                 order.getId(),  // 주문 객체
                 user.getId(),   // 사용자 객체
-                totalAmount,  // 결제 금액
+                discountAmount,  // 결제 금액
                 "SUCCESS"  // 결제 상태
         );
         paymentService.createPayment(payment);
 
         ecommerceDataPlatform.send();
 
-        return new PaymentResult.PaymentRegisterV1(order.getId(), totalAmount.longValue(), OrderStatus.COMPLETED.toString());
+        return new PaymentResult.PaymentRegisterV1(order.getId(), discountAmount.longValue(), OrderStatus.COMPLETED.toString());
     }
 }
