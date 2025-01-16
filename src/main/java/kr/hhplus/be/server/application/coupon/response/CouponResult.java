@@ -1,6 +1,6 @@
-package kr.hhplus.be.server.interfaces.coupon;
+package kr.hhplus.be.server.application.coupon.response;
 
-public class CouponResponse {
+public class CouponResult {
     public record CouponRegisterV1(long issuedCouponId, String name,String status,String validUntil){}
     public record IssuedCouponRegisterV1(long couponId, long userId){}
 }

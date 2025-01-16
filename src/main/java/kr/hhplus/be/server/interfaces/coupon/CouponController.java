@@ -5,7 +5,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kr.hhplus.be.server.facade.CouponFacade;
+import kr.hhplus.be.server.application.coupon.CouponFacade;
+import kr.hhplus.be.server.application.coupon.request.CouponInfo;
+import kr.hhplus.be.server.application.coupon.response.CouponResult;
 import kr.hhplus.be.server.support.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -27,12 +29,12 @@ public class CouponController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "쿠폰 목록 조회 성공",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = CouponResponse.CouponRegisterV1.class))),
+                                    schema = @Schema(implementation = CouponResult.CouponRegisterV1.class))),
                     @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음",
                             content = @Content(mediaType = "application/json"))
             }
     )
-    public CustomApiResponse<List<CouponResponse.CouponRegisterV1>>getUserCoupons(@PathVariable(name="userId") long userId) {
+    public CustomApiResponse<List<CouponResult.CouponRegisterV1>>getUserCoupons(@PathVariable(name="userId") long userId) {
         return CustomApiResponse.ok(couponFacade.getUserCoupons(userId), "쿠폰 목록 조회에 성공했습니다.");
     }
 
@@ -43,17 +45,17 @@ public class CouponController {
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "선착순 쿠폰 발급",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CouponRequest.CouponRegisterV1.class))
+                            schema = @Schema(implementation = CouponInfo.CouponRegisterV1.class))
             ),
             responses = {
                     @ApiResponse(responseCode = "200", description = "쿠폰 발급 성공",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = CouponResponse.IssuedCouponRegisterV1.class))),
+                                    schema = @Schema(implementation = CouponResult.IssuedCouponRegisterV1.class))),
                     @ApiResponse(responseCode = "400", description = "잘못된 요청",
                             content = @Content(mediaType = "application/json"))
             }
     )
-    public CustomApiResponse<CouponResponse.IssuedCouponRegisterV1> issueCoupon(@RequestBody CouponRequest.CouponRegisterV1 couponRequest) {
+    public CustomApiResponse<CouponResult.IssuedCouponRegisterV1> issueCoupon(@RequestBody CouponInfo.CouponRegisterV1 couponRequest) {
         return CustomApiResponse.ok(couponFacade.issueCoupon(couponRequest), "쿠폰 발급에 성공했습니다.");
     }
 }
