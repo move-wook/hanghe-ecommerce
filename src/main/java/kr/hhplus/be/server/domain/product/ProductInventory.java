@@ -22,14 +22,13 @@ public class ProductInventory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    @Column(nullable = false)
+    private Long productId;
 
     @Column(nullable = false)
     private long stock;
 
-    @Column(name = "last_updated", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime lastUpdated;
 
     @PrePersist
@@ -42,10 +41,18 @@ public class ProductInventory {
         this.lastUpdated = LocalDateTime.now();
     }
 
-    public void subtractStock(long quantity) {
+    public void validateStock(long quantity) {
         if (this.stock < quantity) {
-            throw new HangHeaException(ErrorCode.INSUFFICIENT_STOCK);
+            throw new HangHeaException(ErrorCode.PRODUCT_EXPIRED);
         }
+    }
+
+    public void deductStock(long quantity) {
+        validateStock(quantity);
+        subtractStock(quantity);
+    }
+
+    public void subtractStock(long quantity) {
         this.stock -= quantity;
     }
 }
