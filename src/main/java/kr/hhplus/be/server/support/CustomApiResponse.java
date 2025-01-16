@@ -1,11 +1,6 @@
 package kr.hhplus.be.server.support;
 
-import kr.hhplus.be.server.interfaces.balance.BalanceResponse;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
-import java.util.Map;
 
 @Getter
 public class CustomApiResponse<T> {
