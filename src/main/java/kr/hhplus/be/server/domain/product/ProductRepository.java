@@ -13,4 +13,6 @@ public interface ProductRepository {
     Optional<ProductInventory> getProductInventoryForUpdate(long productId);
 
     void saveProductInventory(ProductInventory productInventory);
+
+    Optional<ProductInventory> getProductInventory(long productId);
 }
