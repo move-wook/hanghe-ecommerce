@@ -38,8 +38,6 @@ public class BalanceService {
         UserBalance userBalance = this.getByUserId(userId);
         // 잔액 차감
         userBalance.subBalance(amount);
-        // 현재 잔액
-        userBalance.addBalance(userBalance.getCurrentBalance());  // 잔액 업데이트
         // 잔액 변경 내용 저장
         userBalanceRepository.save(userBalance);
     }
