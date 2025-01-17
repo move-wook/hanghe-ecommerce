@@ -126,7 +126,7 @@ public class TestCouponService {
         doNothing().when(couponRepository).save(any(IssuedCoupon.class));
 
         // When
-        IssuedCoupon result = couponService.issueCoupon(couponId, user);
+        IssuedCoupon result = couponService.issueCoupon(couponId, user.getId());
 
         // Then
         assertThat(result).isNotNull();
@@ -154,7 +154,7 @@ public class TestCouponService {
 
         // When & Then
         HangHeaException exception = assertThrows(HangHeaException.class, () -> {
-            couponService.issueCoupon(couponId, user);
+            couponService.issueCoupon(couponId, user.getId());
         });
 
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.COUPON_EXPIRED);
