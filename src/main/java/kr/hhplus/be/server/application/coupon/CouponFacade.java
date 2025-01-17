@@ -26,7 +26,7 @@ public class CouponFacade {
         //사용자 검증
         User user = userService.getUserById(couponRequest.userId());
         // 쿠폰 발급
-        IssuedCoupon issuedCoupon = couponService.issueCoupon(couponRequest.couponId(), user);
+        IssuedCoupon issuedCoupon = couponService.issueCoupon(couponRequest.couponId(), user.getId());
 
         return new CouponResult.IssuedCouponRegisterV1(issuedCoupon.getId(),
                 user.getId());

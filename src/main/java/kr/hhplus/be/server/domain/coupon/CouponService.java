@@ -24,16 +24,16 @@ public class CouponService {
     @Transactional
     public Coupon findCouponForUpdate(long couponId) {
         return couponRepository.findCouponForUpdate(couponId)
-                .orElseThrow(() -> new HangHeaException(ErrorCode.INVALID_COUPON));
+                .orElseThrow(() -> new HangHeaException(ErrorCode.COUPON_EXPIRED));
     }
     @Transactional
-    public IssuedCoupon issueCoupon(long couponId, User user) {
+    public IssuedCoupon issueCoupon(long couponId, long userId) {
         Coupon coupon = this.findCouponForUpdate(couponId);
         //쿠폰 발급처리;
         coupon.incrementIssuedCount();
         couponRepository.save(coupon);
         //쿠폰 발급 저장
-        IssuedCoupon issuedCoupon = new IssuedCoupon(user.getId(), coupon.getId());
+        IssuedCoupon issuedCoupon = new IssuedCoupon(userId, coupon.getId());
         couponRepository.save(issuedCoupon);  // 발급된 쿠폰 저장
         return issuedCoupon; // 발급된 쿠폰 반환
     }
