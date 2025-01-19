@@ -1,9 +1,7 @@
 package kr.hhplus.be.server.coupon;
 
 import kr.hhplus.be.server.domain.coupon.Coupon;
-import kr.hhplus.be.server.domain.coupon.CouponRepository;
 import kr.hhplus.be.server.domain.coupon.CouponService;
-import kr.hhplus.be.server.domain.user.UserRepository;
 import kr.hhplus.be.server.infra.coupon.JpaCouponRepository;
 import kr.hhplus.be.server.support.HangHeaException;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,20 +20,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 public class TestCouponConcurrency {
 
     @Autowired
-    private CouponRepository couponRepository;
-
-    @Autowired
     private JpaCouponRepository jpaCouponRepository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private CouponService couponService;
