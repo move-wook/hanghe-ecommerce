@@ -10,7 +10,9 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface JpaUserBalanceRepository extends JpaRepository<UserBalance, Long> {
-    @Query("SELECT b FROM UserBalance b WHERE b.user.id = :userId")
+    @Query("SELECT b FROM UserBalance b WHERE b.userId = :userId")
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<UserBalance> findBalanceForUpdate(@Param("userId")long userId);
+
+    Optional<UserBalance> findByUserId(long userId);
 }

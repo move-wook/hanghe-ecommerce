@@ -1,10 +1,11 @@
-package kr.hhplus.be.server.facade;
+package kr.hhplus.be.server.application.product;
 
 import kr.hhplus.be.server.domain.order.OrderService;
 import kr.hhplus.be.server.domain.product.Product;
+import kr.hhplus.be.server.domain.product.ProductInventory;
 import kr.hhplus.be.server.domain.product.ProductService;
-import kr.hhplus.be.server.interfaces.product.ProductPageResponse;
-import kr.hhplus.be.server.interfaces.product.ProductResponse;
+import kr.hhplus.be.server.application.product.response.ProductPageResult;
+import kr.hhplus.be.server.application.product.response.ProductResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,15 +23,18 @@ public class ProductFacade {
     private final OrderService orderService;
 
     // 리스트 조회
-    public ProductPageResponse.ProductPageRegisterV1 listProducts(int page, int size, String sort) {
+    public ProductPageResult.ProductPageRegisterV1 listProducts(int page, int size, String sort) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sort.split(",")[1]), sort.split(",")[0]));
         Page<Product> productPage = productService.listProducts(pageable);
 
-        List<ProductResponse.ProductRegisterV1> products = productPage.getContent().stream()
-                .map(new ProductResponse()::from)
+        List<ProductResult.ProductRegisterV1> products = productPage.getContent().stream()
+                .map(product -> {
+                    long stock = productService.getProductInventory(product.getId()).getStock();
+                    return ProductResult.ProductRegisterV1.from(product, stock);
+                })
                 .toList();
 
-        return new ProductPageResponse().from(
+        return new ProductPageResult().from(
                 products,
                 productPage.getTotalPages(),
                 productPage.getTotalElements(),
@@ -39,14 +43,15 @@ public class ProductFacade {
     }
 
     // 단건 조회
-    public ProductResponse.ProductRegisterV1 getProductById(Long id) {
+    public ProductResult.ProductRegisterV1 getProductById(Long id) {
         Product product = productService.getProductById(id);
-        return new ProductResponse().from(product);
+        ProductInventory productInventory = productService.getProductInventory(id);
+        return ProductResult.ProductRegisterV1.from(product, productInventory.getStock());
     }
 
-    public List<ProductResponse.ProductTopRegisterV1> getTopProductsBySales(int limit) {
+    public List<ProductResult.ProductTopRegisterV1> getTopProductsBySales(int limit) {
         return orderService.findTopSellingProducts(limit).stream()
-                .map(result -> new ProductResponse.ProductTopRegisterV1(
+                .map(result -> new ProductResult.ProductTopRegisterV1(
                         result.id(),
                         result.name(),
                         result.totalSold()

@@ -2,12 +2,12 @@ spring:
   application:
     name: hhplus
   profiles:
-    active: local
+    active: test
   datasource:
     name: HangHaePlusDataSource
     type: com.zaxxer.hikari.HikariDataSource
     hikari:
-      maximum-pool-size: 3
+      maximum-pool-size: 20
       connection-timeout: 10000
       max-lifetime: 60000
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -16,20 +16,20 @@ spring:
     generate-ddl: false
     show-sql: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
     properties:
       hibernate.timezone.default_storage: NORMALIZE_UTC
       hibernate.jdbc.time_zone: UTC
-  sql:
-    init:
-      schema-locations: classpath:schema.sql
-      data-locations: classpath:data.sql
-      mode: always
+    defer-datasource-initialization: true
+
 
 ---
 spring.config.activate.on-profile: local, test
 
 spring:
+  sql:
+    init:
+      mode: always
   datasource:
     url: jdbc:mysql://localhost:3306/hhplus?characterEncoding=UTF-8&serverTimezone=UTC
     username: application

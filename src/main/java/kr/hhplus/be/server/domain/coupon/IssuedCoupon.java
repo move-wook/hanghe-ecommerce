@@ -1,7 +1,8 @@
 package kr.hhplus.be.server.domain.coupon;
 
 import jakarta.persistence.*;
-import kr.hhplus.be.server.domain.user.User;
+import kr.hhplus.be.server.support.ErrorCode;
+import kr.hhplus.be.server.support.HangHeaException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,13 +22,11 @@ public class IssuedCoupon {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(nullable = false)
+    private Long userId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "coupon_id", nullable = false)
-    private Coupon coupon;
+    @Column(nullable = false)
+    private Long couponId;
 
     @Column(nullable = false)
     private boolean used;
@@ -44,23 +43,35 @@ public class IssuedCoupon {
     }
 
     // 발급 시 생성자
-    public IssuedCoupon(User user, Coupon coupon) {
-        this.user = user;
-        this.coupon = coupon;
+    public IssuedCoupon(Long userId, Long couponId) {
+        this.userId = userId;
+        this.couponId = couponId;
         this.used = false;  // 초기값: 사용되지 않음
         this.usedAt = null; // 사용된 날짜는 없음
     }
 
     // 비즈니스 로직
-    public void markAsUsed() {
-        if (this.used) {
-            throw new IllegalStateException("Coupon already used");
+    public void markAsUsed(Coupon coupon) {
+        //쿠폰을 이미 사용한 경우
+        if(this.isUsed()){
+            throw new HangHeaException(ErrorCode.COUPON_ALREADY_USED);
         }
+        //쿠폰이 만료된 경우
+        if(this.isExpired(coupon)){
+            throw new HangHeaException(ErrorCode.COUPON_EXPIRED);
+        }
+
         this.used = true;
         this.usedAt = LocalDateTime.now();
     }
 
-    public boolean isExpired() {
+    public boolean isExpired(Coupon coupon) {
         return !coupon.isValid();
     }
+
+    public String getStatus() {
+        return used ? "USED" : "UNUSED";
+    }
+
+
 }

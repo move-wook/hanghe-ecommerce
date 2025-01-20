@@ -15,7 +15,8 @@ public enum ErrorCode {
 	NOT_FOUND_PRODUCT("E300", "해당 상품이 존재하지 않습니다.", HttpStatus.NOT_FOUND),
 	PRODUCT_EXPIRED("E301", "상품재고가 모두 품절되었습니다.", HttpStatus.NO_CONTENT),
 	PRODUCT_INVENTORY_EXPIRED("E302", "상품에 대한 재고가 존재하지 않습니다.", HttpStatus.NOT_FOUND),
-	// 쿠폰 관련
+	INSUFFICIENT_STOCK("E303", "상품에 대한 재고가 부족합니다.", HttpStatus.NO_CONTENT),
+	// 쿠폰
 	INVALID_COUPON("E400", "유효하지 않은 쿠폰입니다.", HttpStatus.BAD_REQUEST),
 	NOT_FOUND_USER_COUPON("E401", "사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 	COUPON_EXPIRED("E402", "쿠폰재고가 모두 소진되었습니다.", HttpStatus.NO_CONTENT),
@@ -23,6 +24,7 @@ public enum ErrorCode {
 
 	// 주문 관련
 	ORDER_NOT_FOUND("E500", "주문을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+	ORDER_ALREADY_COMPLETED("E501", "이미 처리된 주문내역입니다.", HttpStatus.NOT_FOUND),
 	// 결제 관련
 	PAYMENT_FAILED("E600", "결제에 실패했습니다.", HttpStatus.PAYMENT_REQUIRED);
 

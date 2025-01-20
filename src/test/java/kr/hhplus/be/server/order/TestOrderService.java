@@ -7,7 +7,7 @@ import kr.hhplus.be.server.domain.order.OrderStatus;
 import kr.hhplus.be.server.domain.product.Product;
 import kr.hhplus.be.server.domain.user.User;
 import kr.hhplus.be.server.infra.order.ProductTopResult;
-import kr.hhplus.be.server.interfaces.order.OrderRequest;
+import kr.hhplus.be.server.application.order.request.OrderInfo;
 import kr.hhplus.be.server.support.ErrorCode;
 import kr.hhplus.be.server.support.HangHeaException;
 import org.junit.jupiter.api.DisplayName;
@@ -45,25 +45,24 @@ public class TestOrderService {
         Product product1 = Product.builder().id(1L).name("티셔츠").price(BigDecimal.valueOf(100)).build();
         Product product2 = Product.builder().id(2L).name("원피스").price(BigDecimal.valueOf(200)).build();
 
-        OrderRequest.OrderProductRegisterV1 orderProduct1 = new OrderRequest.OrderProductRegisterV1(1L, 2);
-        OrderRequest.OrderProductRegisterV1 orderProduct2 = new OrderRequest.OrderProductRegisterV1(2L, 1);
+        OrderInfo.OrderProductRegisterV1 orderProduct1 = new OrderInfo.OrderProductRegisterV1(1L, 2);
+        OrderInfo.OrderProductRegisterV1 orderProduct2 = new OrderInfo.OrderProductRegisterV1(2L, 1);
 
         List<Product> products = Arrays.asList(product1, product2);
-        List<OrderRequest.OrderProductRegisterV1> orderProducts = Arrays.asList(orderProduct1, orderProduct2);
+        List<OrderInfo.OrderProductRegisterV1> orderProducts = Arrays.asList(orderProduct1, orderProduct2);
 
         Order order = new Order();
-        order.assignUser(user);
+        order.assignUser(user.getId());
         order.updateStatus(OrderStatus.PENDING);
 
         doNothing().when(orderRepository).save(any(Order.class));
 
         // When
-        Order result = orderService.createOrder(user, products, orderProducts);
+        Order result = orderService.processOrderCreation(user, products, orderProducts);
 
         // Then
         assertThat(result).isNotNull();
-        assertThat(result.getUser()).isEqualTo(user);
-        assertThat(result.getOrderItems()).hasSize(2);
+        assertThat(result.getUserId()).isEqualTo(user.getId());
         assertThat(result.getStatus()).isEqualTo(OrderStatus.PENDING);
 
     }
@@ -91,7 +90,7 @@ public class TestOrderService {
         Order order = new Order();
 
         // When
-        orderService.save(order);
+        orderService.updateStatus(order);
 
         // Then
         verify(orderRepository, times(1)).save(order);
@@ -101,7 +100,7 @@ public class TestOrderService {
     @DisplayName("가장 많이 팔린 상위 상품을 주문과 상품을 통해 3순위까지 조회한다.")
     void shouldFindTopSellingProductsSuccessfully() {
         // Given
-        int limit = 3;
+        int limit = 5;
         ProductTopResult topResult1 = new ProductTopResult(1L, "Product A", 100);
         ProductTopResult topResult2 = new ProductTopResult(2L, "Product B", 50);
 

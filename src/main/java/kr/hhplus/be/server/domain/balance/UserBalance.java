@@ -1,7 +1,8 @@
 package kr.hhplus.be.server.domain.balance;
 
 import jakarta.persistence.*;
-import kr.hhplus.be.server.domain.user.User;
+import kr.hhplus.be.server.support.ErrorCode;
+import kr.hhplus.be.server.support.HangHeaException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,14 +23,13 @@ public class UserBalance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(nullable = false)
+    private Long userId;
 
-    @Column(name = "current_balance", nullable = false)
+    @Column(nullable = false)
     private BigDecimal currentBalance = BigDecimal.ZERO;
 
-    @Column(name = "last_updated", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime lastUpdated;
 
     // 수정 시점 업데이트
@@ -44,7 +44,25 @@ public class UserBalance {
     }
 
     public void addBalance(BigDecimal newBalance) {
-        this.currentBalance = newBalance;
+        BigDecimal MAX_BALANCE_LIMIT = BigDecimal.valueOf(10000000);
+        if (newBalance.compareTo(BigDecimal.ZERO) <= 0) {
+            //충전 금액이 0보다 작거나 같을 경우
+            throw new HangHeaException(ErrorCode.INVALID_BALANCE);
+        }
+        if(currentBalance.add(newBalance).compareTo(MAX_BALANCE_LIMIT) > 0) {
+            throw new HangHeaException(ErrorCode.MAX_BALANCE);
+        }
+        this.currentBalance = currentBalance.add(newBalance);
         this.lastUpdated = LocalDateTime.now(); // 잔액 수정 시간 업데이트
     }
+
+    public void subBalance(BigDecimal subBalance) {
+        if (this.getCurrentBalance().compareTo(subBalance) < 0) {
+            throw new HangHeaException(ErrorCode.INSUFFICIENT_BALANCE);  // 잔액 부족 예외 처리
+        }
+        this.currentBalance =  this.getCurrentBalance().subtract(subBalance);
+    }
+
+
+
 }

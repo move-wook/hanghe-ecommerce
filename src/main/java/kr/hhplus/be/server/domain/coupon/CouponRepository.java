@@ -16,4 +16,6 @@ public interface CouponRepository {
     void save(IssuedCoupon issuedCoupon);
 
     Optional<IssuedCoupon> findByIdAndUserId(long couponId, long userId);
+
+    Optional<Coupon> findByCouponId(long couponId);
 }

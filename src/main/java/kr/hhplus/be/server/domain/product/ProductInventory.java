@@ -1,6 +1,8 @@
 package kr.hhplus.be.server.domain.product;
 
 import jakarta.persistence.*;
+import kr.hhplus.be.server.support.ErrorCode;
+import kr.hhplus.be.server.support.HangHeaException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,14 +22,13 @@ public class ProductInventory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    @Column(nullable = false)
+    private Long productId;
 
     @Column(nullable = false)
     private long stock;
 
-    @Column(name = "last_updated", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime lastUpdated;
 
     @PrePersist
@@ -40,21 +41,18 @@ public class ProductInventory {
         this.lastUpdated = LocalDateTime.now();
     }
 
-    // 비즈니스 로직
-    public void addStock(int amount) {
-        if (amount < 0) {
-            throw new IllegalArgumentException("Quantity to add cannot be negative");
+    public void validateStock(long quantity) {
+        if (this.stock < quantity) {
+            throw new HangHeaException(ErrorCode.PRODUCT_EXPIRED);
         }
-        this.stock += amount;
+    }
+
+    public void deductStock(long quantity) {
+        validateStock(quantity);
+        subtractStock(quantity);
     }
 
     public void subtractStock(long quantity) {
-        if (quantity < 0) {
-            throw new IllegalArgumentException("Quantity to subtract cannot be negative");
-        }
-        if (this.stock < quantity) {
-            throw new IllegalStateException("Not enough stock available");
-        }
         this.stock -= quantity;
     }
 }

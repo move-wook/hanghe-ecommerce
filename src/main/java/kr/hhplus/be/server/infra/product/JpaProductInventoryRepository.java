@@ -10,8 +10,9 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface JpaProductInventoryRepository extends JpaRepository<ProductInventory, Long> {
-    @Query("SELECT b FROM ProductInventory b WHERE b.product.id = :productId")
+    @Query("SELECT b FROM ProductInventory b WHERE b.productId = :productId")
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<ProductInventory> findProductInventoryForUpdate(@Param("productId")long productId);
 
+    Optional<ProductInventory> findByProductId(long productId);
 }

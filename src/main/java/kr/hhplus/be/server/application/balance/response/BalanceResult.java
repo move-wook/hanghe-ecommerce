@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.interfaces.balance;
+package kr.hhplus.be.server.application.balance.response;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 
 
-public class BalanceResponse {
+public class BalanceResult {
     @Schema(description = "잔액 조회 V1", example = """
         {
             "userId": 1,

@@ -36,4 +36,9 @@ public class IProductRepository implements ProductRepository {
     public void saveProductInventory(ProductInventory productInventory) {
          jpaProductInventoryRepository.save(productInventory);
     }
+
+    @Override
+    public Optional<ProductInventory> getProductInventory(long productId) {
+        return jpaProductInventoryRepository.findByProductId(productId);
+    }
 }

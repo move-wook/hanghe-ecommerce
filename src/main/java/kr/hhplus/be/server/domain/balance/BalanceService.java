@@ -27,22 +27,8 @@ public class BalanceService {
     }
     @Transactional
     public void updateBalance(UserBalance balance, long amount) {
-        // 금액 유효성 검증 (예: 음수 금액 방지)
-        if (amount <= 0) {
-            throw new HangHeaException(ErrorCode.INVALID_BALANCE);
-        }
-        // 기존 잔액과 요청 금액 합산
-        BigDecimal newBalance = balance.getCurrentBalance().add(BigDecimal.valueOf(amount));
-
-        // 충전 한도 초과 확인 (옵션)
-        long maxBalance = 1_000_000L; // 예: 최대 잔액 1,000,000
-        if (newBalance.longValue() > maxBalance) {
-            throw new HangHeaException(ErrorCode.MAX_BALANCE);
-        }
-
-        // 잔액 업데이트
-        balance.addBalance(newBalance);
-
+        // 잔액 추가
+        balance.addBalance(BigDecimal.valueOf(amount));
         // 변경된 데이터 저장
         userBalanceRepository.save(balance);
     }
@@ -50,13 +36,8 @@ public class BalanceService {
     @Transactional
     public void deductBalance(long userId, BigDecimal amount) {
         UserBalance userBalance = this.getByUserId(userId);
-        // 잔액 부족 여부 확인
-        if (userBalance.getCurrentBalance().compareTo(amount) < 0) {
-            throw new HangHeaException(ErrorCode.INSUFFICIENT_BALANCE);  // 잔액 부족 예외 처리
-        }
         // 잔액 차감
-        BigDecimal newBalance = userBalance.getCurrentBalance().subtract(amount);
-        userBalance.addBalance(newBalance);  // 잔액 업데이트
+        userBalance.subBalance(amount);
         // 잔액 변경 내용 저장
         userBalanceRepository.save(userBalance);
     }

@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface JpaIssuedCouponRepository extends JpaRepository<IssuedCoupon, Long> {
     Optional<List<IssuedCoupon>> findAllByUserId(long id);
-    @Query("SELECT b FROM IssuedCoupon b WHERE b.id = :id AND b.user.id = :userId")
+    @Query("SELECT b FROM IssuedCoupon b WHERE b.id = :id AND b.userId = :userId")
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<IssuedCoupon> findByIdAndUserId(@Param("id") long id, @Param("userId")long userId);
 }

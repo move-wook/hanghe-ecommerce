@@ -16,11 +16,11 @@ public class HangHeaException extends RuntimeException {
             return errorCode.getCode();
         }
 
-        public String getMessage() {
+    public String getMessage() {
             return errorCode.getMessage();
         }
 
-        public HttpStatus getHttpStatus() {
+    public HttpStatus getHttpStatus() {
             return errorCode.getHttpStatus();
         }
 }

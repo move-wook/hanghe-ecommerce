@@ -1,8 +1,8 @@
-package kr.hhplus.be.server.interfaces.coupon;
+package kr.hhplus.be.server.application.coupon.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-public class CouponRequest {
+public class CouponInfo {
     @Schema(description = "쿠폰 조회 요청 데이터", example = """
         {
             "userId": 1,

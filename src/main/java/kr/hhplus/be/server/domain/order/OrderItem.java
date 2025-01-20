@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.domain.order;
 
 import jakarta.persistence.*;
-import kr.hhplus.be.server.domain.product.Product;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,13 +16,11 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "order_id", nullable = false)
-    private Order order;
+    @Column(nullable = false)
+    private Long orderId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    @Column(nullable = false)
+    private Long productId;
 
     @Column(nullable = false)
     private long quantity;
@@ -33,19 +30,21 @@ public class OrderItem {
 
     // 총 금액 계산 메서드
     public BigDecimal calculateTotalPrice() {
+        if (price == null || quantity <= 0) {
+            throw new IllegalStateException("Invalid price or quantity");
+        }
         return price.multiply(BigDecimal.valueOf(quantity));
     }
     // 생성자 및 비즈니스 로직
-    public OrderItem(Product product, long quantity, BigDecimal price) {
-        this.product = product;
+    public OrderItem(Long productId, long quantity, BigDecimal price) {
+        this.productId = productId;
         this.quantity = quantity;
         this.price = price;
     }
 
-    public void assignOrder(Order order) {
-        if (order == null) {
-            throw new IllegalArgumentException("주문은 null일 수 없습니다.");
-        }
-        this.order = order;
+    public void assignOrder(Long orderId) {
+        this.orderId = orderId;
     }
+
+
 }
