@@ -28,7 +28,7 @@ public class CouponService {
     }
     @Transactional
     public IssuedCoupon issueCoupon(long couponId, long userId) {
-        Coupon coupon = this.findCouponForUpdate(couponId);
+        Coupon coupon = findCouponForUpdate(couponId);
         //쿠폰 발급처리;
         coupon.incrementIssuedCount();
         couponRepository.save(coupon);
@@ -40,8 +40,8 @@ public class CouponService {
     @Transactional
     public IssuedCoupon useCoupon(long issueCouponId, long userId) {
         // 발급된 쿠폰을 찾아오기
-        IssuedCoupon issuedCoupon = this.findByIdAndUserId(issueCouponId, userId);
-        Coupon coupon = this.findByCouponId(issuedCoupon.getCouponId());
+        IssuedCoupon issuedCoupon = findByIdAndUserId(issueCouponId, userId);
+        Coupon coupon = findByCouponId(issuedCoupon.getCouponId());
         // 쿠폰 사용 처리
         issuedCoupon.markAsUsed(coupon);  // 쿠폰 검증 및 사용 처리
         couponRepository.save(issuedCoupon);  // 사용된 쿠폰 업데이트
