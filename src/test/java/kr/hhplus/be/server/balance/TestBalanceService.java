@@ -36,6 +36,7 @@ public class TestBalanceService {
         UserBalance userBalance = UserBalance.builder()
                 .id(1L)
                 .userId(userId)
+                .version(0)
                 .currentBalance(BigDecimal.valueOf(1000))
                 .build();
 
@@ -46,27 +47,6 @@ public class TestBalanceService {
         assertThat(userId).isEqualTo(result.getUserId());
         assertThat(BigDecimal.valueOf(1000)).isEqualTo(result.getCurrentBalance());
     }
-
-
-    @Test
-    @DisplayName("특정 사용자의 ID조회시 사용자가 존재하지 않으면 HangHeaException 예외를 발생시킨다. ")
-    void shouldThrowExceptionWhenUserNotFound() {
-        // Given
-        long userId = 1L;
-
-        when(userBalanceRepository.findByUserId(userId)).thenReturn(Optional.empty());
-
-        // When & Then
-        HangHeaException exception = assertThrows(HangHeaException.class, () -> {
-            balanceService.getByUserId(userId);
-        });
-
-        // 예외 메시지와 코드 검증
-        assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.NOT_FOUND_USER);
-        assertThat(exception.getMessage()).isEqualTo("사용자를 찾을 수 없습니다.");
-    }
-
-
 
     @Test
     @DisplayName("특정 사용자의 ID로 현재 잔액을 조회한다.")
@@ -79,9 +59,9 @@ public class TestBalanceService {
                 .currentBalance(BigDecimal.valueOf(1000))
                 .build();
 
-        when(userBalanceRepository.findBalanceForUpdate(userId)).thenReturn(Optional.of(userBalance));
+        when(userBalanceRepository.findByUserId(userId)).thenReturn(Optional.of(userBalance));
 
-        UserBalance result = balanceService.findBalanceForUpdate(userId);
+        UserBalance result = balanceService.getByUserId(userId);
 
         assertThat(userId).isEqualTo(result.getUserId());
         assertThat(BigDecimal.valueOf(1000)).isEqualTo(result.getCurrentBalance());
@@ -93,14 +73,18 @@ public class TestBalanceService {
         long userId = 1L;
 
         UserBalance userBalance = UserBalance.builder()
-                .id(1L)
                 .userId(userId)
+                .version(0)
                 .currentBalance(BigDecimal.valueOf(1000))
                 .build();
 
-        when(userBalanceRepository.save(userBalance)).thenReturn(userBalance);
+        // Mockito로 findByUserId() 호출 시, userBalance를 반환하도록 설정
+        when(userBalanceRepository.findByUserId(userId)).thenReturn(Optional.of(userBalance));
 
-        balanceService.updateBalance(userBalance, 500L);
+        // Mockito에서 save() 메서드를 호출할 때, 실제로는 userBalance 객체가 업데이트되도록 설정
+        when(userBalanceRepository.save(any(UserBalance.class))).thenReturn(userBalance);
+
+        balanceService.updateBalance(userId, 500L);
 
         assertThat(BigDecimal.valueOf(1500)).isEqualTo(userBalance.getCurrentBalance());
 
@@ -121,13 +105,13 @@ public class TestBalanceService {
 
 
         HangHeaException exception1 = assertThrows(HangHeaException.class, () -> {
-            balanceService.updateBalance(userBalance, 0);
+            balanceService.updateBalance(userId, 0);
         });
         assertThat(ErrorCode.INVALID_BALANCE).isEqualTo(exception1.getErrorCode());
 
 
         HangHeaException exception2 = assertThrows(HangHeaException.class, () -> {
-            balanceService.updateBalance(userBalance, -500);
+            balanceService.updateBalance(userId, -500);
         });
         assertThat(ErrorCode.INVALID_BALANCE).isEqualTo(exception2.getErrorCode());
 

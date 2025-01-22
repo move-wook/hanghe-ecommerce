@@ -16,12 +16,6 @@ public class IUserBalanceRepository implements UserBalanceRepository {
     public Optional<UserBalance> findByUserId(long userId) {
         return JpaUserBalanceRepository.findByUserId(userId);
     }
-
-    @Override
-    public Optional<UserBalance> findBalanceForUpdate(long userId) {
-        return JpaUserBalanceRepository.findBalanceForUpdate(userId);
-    }
-
     @Override
     public UserBalance save(UserBalance balance) {
         return JpaUserBalanceRepository.save(balance);

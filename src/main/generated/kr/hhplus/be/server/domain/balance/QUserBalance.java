@@ -27,6 +27,8 @@ public class QUserBalance extends EntityPathBase<UserBalance> {
 
     public final NumberPath<Long> userId = createNumber("userId", Long.class);
 
+    public final NumberPath<Integer> version = createNumber("version", Integer.class);
+
     public QUserBalance(String variable) {
         super(UserBalance.class, forVariable(variable));
     }

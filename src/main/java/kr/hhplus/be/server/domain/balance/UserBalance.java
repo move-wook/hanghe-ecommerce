@@ -32,6 +32,9 @@ public class UserBalance {
     @Column(nullable = false)
     private LocalDateTime lastUpdated;
 
+    @Version
+    private int version=0;
+
     // 수정 시점 업데이트
     @PrePersist
     public void prePersist() {
