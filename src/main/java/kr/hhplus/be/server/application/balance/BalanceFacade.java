@@ -17,7 +17,7 @@ public class BalanceFacade {
     private final BalanceService balanceService;
     private final UserService userService;
 
-    @Transactional
+
     public BalanceResult.BalanceRegisterV1 getUserBalance(long userId) {
         User user = userService.getUserById(userId);
         UserBalance balance = balanceService.getByUserId(user.getId());

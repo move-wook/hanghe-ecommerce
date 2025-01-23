@@ -1,6 +1,5 @@
 package kr.hhplus.be.server.domain.balance;
 
-import jakarta.persistence.OptimisticLockException;
 import kr.hhplus.be.server.support.ErrorCode;
 import kr.hhplus.be.server.support.HangHeaException;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,20 +16,11 @@ public class BalanceService {
     private final UserBalanceRepository userBalanceRepository;
 
     public UserBalance getByUserId(long userId) {
-        return userBalanceRepository.findByUserId(userId)
-                .orElse(UserBalance.builder()
-                        .userId(userId)
-                        .currentBalance(BigDecimal.ZERO)
-                        .build());
-
+        return userBalanceRepository.findByUserId(userId);
     }
-    @Transactional
+
     public UserBalance updateBalance(long userId, long amount) {
-        UserBalance userBalance = userBalanceRepository.findByUserId(userId)
-                .orElse(UserBalance.builder()
-                        .userId(userId)
-                        .currentBalance(BigDecimal.ZERO)
-                        .build());
+        UserBalance userBalance = userBalanceRepository.findByUserId(userId);
         // 잔액 추가
         userBalance.addBalance(BigDecimal.valueOf(amount));
         try {
@@ -40,7 +29,6 @@ public class BalanceService {
             throw new HangHeaException(ErrorCode.BALANCE_RESOURCE_LOCKED);
         }
         // 변경된 데이터 저장
-
         return userBalance;
     }
 

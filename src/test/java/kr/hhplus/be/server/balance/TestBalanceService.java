@@ -40,7 +40,7 @@ public class TestBalanceService {
                 .currentBalance(BigDecimal.valueOf(1000))
                 .build();
 
-        when(userBalanceRepository.findByUserId(userId)).thenReturn(Optional.of(userBalance));
+        when(userBalanceRepository.findByUserId(userId)).thenReturn(userBalance);
 
         UserBalance result = balanceService.getByUserId(userId);
 
@@ -59,7 +59,7 @@ public class TestBalanceService {
                 .currentBalance(BigDecimal.valueOf(1000))
                 .build();
 
-        when(userBalanceRepository.findByUserId(userId)).thenReturn(Optional.of(userBalance));
+        when(userBalanceRepository.findByUserId(userId)).thenReturn(userBalance);
 
         UserBalance result = balanceService.getByUserId(userId);
 
@@ -79,7 +79,7 @@ public class TestBalanceService {
                 .build();
 
         // Mockito로 findByUserId() 호출 시, userBalance를 반환하도록 설정
-        when(userBalanceRepository.findByUserId(userId)).thenReturn(Optional.of(userBalance));
+        when(userBalanceRepository.findByUserId(userId)).thenReturn(userBalance);
 
         // Mockito에서 save() 메서드를 호출할 때, 실제로는 userBalance 객체가 업데이트되도록 설정
         when(userBalanceRepository.save(any(UserBalance.class))).thenReturn(userBalance);
@@ -132,7 +132,7 @@ public class TestBalanceService {
                 .currentBalance(initialBalance)
                 .build();
 
-        when(userBalanceRepository.findByUserId(userId)).thenReturn(Optional.of(userBalance));
+        when(userBalanceRepository.findByUserId(userId)).thenReturn(userBalance);
         //잔액 차감
         balanceService.deductBalance(userId, deductionAmount);
 
@@ -158,7 +158,7 @@ public class TestBalanceService {
                 .currentBalance(initialBalance)
                 .build();
 
-        when(userBalanceRepository.findByUserId(userId)).thenReturn(Optional.of(userBalance));
+        when(userBalanceRepository.findByUserId(userId)).thenReturn(userBalance);
 
         // When & Then
         HangHeaException exception = assertThrows(HangHeaException.class, () -> {
