@@ -32,6 +32,9 @@ public class UserBalance {
     @Column(nullable = false)
     private LocalDateTime lastUpdated;
 
+    @Version
+    private Integer version = 0;
+
     // 수정 시점 업데이트
     @PrePersist
     public void prePersist() {
@@ -52,7 +55,7 @@ public class UserBalance {
         if(currentBalance.add(newBalance).compareTo(MAX_BALANCE_LIMIT) > 0) {
             throw new HangHeaException(ErrorCode.MAX_BALANCE);
         }
-        this.currentBalance = currentBalance.add(newBalance);
+        this.currentBalance = this.getCurrentBalance().add(newBalance);
         this.lastUpdated = LocalDateTime.now(); // 잔액 수정 시간 업데이트
     }
 
