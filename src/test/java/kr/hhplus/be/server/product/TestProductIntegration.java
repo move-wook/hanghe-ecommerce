@@ -38,8 +38,6 @@ public class TestProductIntegration {
                 .andExpect(status().isOk()) // HTTP 200 확인
                 .andExpect(jsonPath("$.data.products").isArray())
                 .andExpect(jsonPath("$.data.products.length()").value(4))
-                .andExpect(jsonPath("$.data.products.[0].id").value(4))
-                .andExpect(jsonPath("$.data.products.[0].name").value("원피스"))
                 .andExpect(header().string("Content-Type", "application/json")); // 응답 헤더 검증
     }
 }

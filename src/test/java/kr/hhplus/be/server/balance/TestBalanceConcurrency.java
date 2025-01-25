@@ -37,34 +37,24 @@ public class TestBalanceConcurrency {
     @Autowired
     private JpaUserRepository jpaUserRepository;
 
-
-    @BeforeEach
-    void setup() {
-        jpaUserBalanceRepository.deleteAll();
-    }
+    private long mockUserId = 1;
 
     @Test
     @DisplayName("chargeUserPoint - 동시성 문제 해결 테스트")
     public void 사용자가500원을_가지고있는경우_100원_충전을_여러번_요청하면_1번만_성공해야한다() throws InterruptedException {
 
-        long initialPoint = 500L;
+        jpaUserBalanceRepository.deleteAll();
+        UserBalance userBalance = UserBalance.builder()
+                .userId(1L)
+                .version(0)
+                .currentBalance(BigDecimal.valueOf(0L))
+                .build();
+        jpaUserBalanceRepository.save(userBalance);
+
         long chargeAmount = 100L;
         int threadCount = 5;
 
-        User mockUser = User.builder()
-                .userName("임동욱")
-                .build();
-        jpaUserRepository.save(mockUser);
-
-        UserBalance userBalance = UserBalance.builder()
-                .userId(mockUser.getId())
-                .version(0)
-                .currentBalance(BigDecimal.valueOf(500L))
-                .build();
-
-        jpaUserBalanceRepository.save(userBalance);
-        System.out.println(userBalance.getLastUpdated());
-        BalanceInfo.BalanceRegisterV1 registerV1 = new BalanceInfo.BalanceRegisterV1(mockUser.getId(), chargeAmount);
+        BalanceInfo.BalanceRegisterV1 registerV1 = new BalanceInfo.BalanceRegisterV1(mockUserId, chargeAmount);
         ExecutorService executorService = Executors.newFixedThreadPool(20);
         CountDownLatch latch = new CountDownLatch(threadCount);
         for (int i = 0; i < threadCount; i++) {
@@ -82,11 +72,11 @@ public class TestBalanceConcurrency {
         latch.await();
         executorService.shutdown();
 
-        UserBalance currentUserBalance = balanceService.getByUserId(mockUser.getId());
-        System.out.println(currentUserBalance.getLastUpdated());
-        System.out.println("최종 잔액: " + currentUserBalance.getCurrentBalance().longValue() + ", 예상 잔액: " + 600);
-        assertThat(600).isEqualTo(currentUserBalance.getCurrentBalance().longValue());
+        UserBalance currentUserBalance = balanceService.getByUserId(mockUserId);
 
+        System.out.println("최종 잔액: " + currentUserBalance.getCurrentBalance().longValue() + ", 예상 잔액: " + 100);
+        assertThat(100).isEqualTo(currentUserBalance.getCurrentBalance().longValue());
+        jpaUserBalanceRepository.deleteAll();
     }
 
 

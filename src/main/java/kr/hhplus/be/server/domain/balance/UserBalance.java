@@ -27,13 +27,13 @@ public class UserBalance {
     private Long userId;
 
     @Column(nullable = false)
-    private BigDecimal currentBalance = BigDecimal.ZERO;
+    private BigDecimal currentBalance ;
 
     @Column(nullable = false)
     private LocalDateTime lastUpdated;
 
     @Version
-    private Integer version = 0;
+    private Integer version;
 
     // 수정 시점 업데이트
     @PrePersist

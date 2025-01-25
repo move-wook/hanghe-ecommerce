@@ -30,8 +30,6 @@ public class ProductService {
         return productRepository.getProductInventoryForUpdate(productId)
                 .orElseThrow(() -> new HangHeaException(ErrorCode.NOT_FOUND_PRODUCT));
     }
-
-
     public ProductInventory getProductInventory(long productId) {
         return productRepository.getProductInventory(productId)
                 .orElseThrow(() -> new HangHeaException(ErrorCode.NOT_FOUND_PRODUCT));

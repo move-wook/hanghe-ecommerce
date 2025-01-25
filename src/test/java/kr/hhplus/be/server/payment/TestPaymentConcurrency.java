@@ -23,11 +23,13 @@ import kr.hhplus.be.server.infra.coupon.JpaCouponRepository;
 import kr.hhplus.be.server.infra.coupon.JpaIssuedCouponRepository;
 import kr.hhplus.be.server.infra.order.JpaOrderItemRepository;
 import kr.hhplus.be.server.infra.order.JpaOrderRepository;
+import kr.hhplus.be.server.infra.payment.JpaPaymentRepository;
 import kr.hhplus.be.server.infra.product.JpaProductInventoryRepository;
 import kr.hhplus.be.server.infra.product.JpaProductRepository;
 import kr.hhplus.be.server.infra.user.JpaUserRepository;
 import kr.hhplus.be.server.support.ErrorCode;
 import kr.hhplus.be.server.support.HangHeaException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +83,8 @@ public class TestPaymentConcurrency {
     @Autowired
     private JpaUserRepository jpaUserRepository;
     @Autowired
+    private JpaPaymentRepository jpaPaymentRepository;
+    @Autowired
     private JpaIssuedCouponRepository jpaIssuedCouponRepository;
     @Autowired
     private PaymentFacade paymentFacade;
@@ -88,16 +92,12 @@ public class TestPaymentConcurrency {
     private BalanceFacade balanceFacade;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private JpaProductRepository jpaProductRepository;
 
     @Test
     @DisplayName("여러번 결재를 요청해도 한번만 결제가 되어야한다.")
     void concurrentProcessPaymentTest() throws  Exception{
-        orderRepository.deleteAll();
-        productRepository.deleteAll();
-        orderItemRepository.deleteAll();
-        productInventoryRepository.deleteAll();
-        userRepository.deleteAll();
-        userBalanceRepository.deleteAll();
 
         // 테스트 상품 생성
         Product product = Product.builder()
@@ -187,18 +187,14 @@ public class TestPaymentConcurrency {
         BalanceResult.BalanceRegisterV1 pointResponse = balanceFacade.getUserBalance(user.getId());
 
         assertThat(userBalance.getCurrentBalance().subtract(discountedTotal)).isEqualTo(pointResponse.currentBalance());
+        jpaProductRepository.delete(product);
+        jpaPaymentRepository.deleteAll();
     }
 
     @Test
     @DisplayName("동시성 테스트: 재고는 음수로 떨어지지 않아야 한다.")
     void concurrentStockDecrementTest() throws Exception {
-        // 초기 데이터 세팅
-        orderRepository.deleteAll();
-        productRepository.deleteAll();
-        orderItemRepository.deleteAll();
-        productInventoryRepository.deleteAll();
-        userRepository.deleteAll();
-        userBalanceRepository.deleteAll();
+
 
         // 테스트 상품 생성
         Product product = Product.builder()
@@ -266,6 +262,9 @@ public class TestPaymentConcurrency {
 
         assertThat(updatedInventory.getStock()).isEqualTo(expectedStock);
 
+
+        jpaProductRepository.delete(product);
+        jpaPaymentRepository.deleteAll();
     }
 
 }

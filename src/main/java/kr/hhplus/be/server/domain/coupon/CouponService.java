@@ -24,7 +24,7 @@ public class CouponService {
     @Transactional
     public Coupon findCouponForUpdate(long couponId) {
         return couponRepository.findCouponForUpdate(couponId)
-                .orElseThrow(() -> new HangHeaException(ErrorCode.COUPON_EXPIRED));
+                .orElseThrow(() -> new HangHeaException(ErrorCode.INVALID_COUPON));
     }
     @Transactional
     public IssuedCoupon issueCoupon(long couponId, long userId) {
