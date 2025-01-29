@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.application.coupon.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import kr.hhplus.be.server.interfaces.coupon.reqeust.CouponRequest;
 
 public class CouponInfo {
     @Schema(description = "쿠폰 조회 요청 데이터", example = """
@@ -12,5 +13,17 @@ public class CouponInfo {
     public record CouponRegisterV1(
             @Schema(description = "사용자 ID", example = "1")long userId,
             @Schema(description = "쿠폰 ID", example = "1")
-            long couponId) {}
+            long couponId) {
+
+        public static CouponRegisterV1 from(CouponRequest.IssuedCoupon couponRequest) {
+            return new CouponRegisterV1(couponRequest.userId(), couponRequest.couponId());
+        }
+    }
+    public record UserCouponRegisterV1(
+            @Schema(description = "사용자 ID", example = "1")long userId
+            ) {
+        public static UserCouponRegisterV1 from(CouponRequest.CouponInfo couponInfo) {
+            return new UserCouponRegisterV1(couponInfo.userId());
+        }
+    }
 }

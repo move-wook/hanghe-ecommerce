@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.hhplus.be.server.application.coupon.CouponFacade;
 import kr.hhplus.be.server.application.coupon.request.CouponInfo;
 import kr.hhplus.be.server.application.coupon.response.CouponResult;
+import kr.hhplus.be.server.interfaces.coupon.reqeust.CouponRequest;
+import kr.hhplus.be.server.interfaces.coupon.response.CouponResponse;
 import kr.hhplus.be.server.support.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -34,8 +36,9 @@ public class CouponController {
                             content = @Content(mediaType = "application/json"))
             }
     )
-    public CustomApiResponse<List<CouponResult.CouponRegisterV1>>getUserCoupons(@PathVariable(name="userId") long userId) {
-        return CustomApiResponse.ok(couponFacade.getUserCoupons(userId), "쿠폰 목록 조회에 성공했습니다.");
+    public CustomApiResponse<List<CouponResponse.CouponRegisterV1>>getUserCoupons(@PathVariable(name="userId") long userId) {
+        List<CouponResult.CouponRegisterV1> list = couponFacade.getUserCoupons(new CouponRequest.CouponInfo(userId));
+        return CustomApiResponse.ok(CouponResponse.CouponRegisterV1.of(list), "쿠폰 목록 조회에 성공했습니다.");
     }
 
     @PostMapping("/coupons/issue")
@@ -55,7 +58,8 @@ public class CouponController {
                             content = @Content(mediaType = "application/json"))
             }
     )
-    public CustomApiResponse<CouponResult.IssuedCouponRegisterV1> issueCoupon(@RequestBody CouponInfo.CouponRegisterV1 couponRequest) {
-        return CustomApiResponse.ok(couponFacade.issueCoupon(couponRequest), "쿠폰 발급에 성공했습니다.");
+    public CustomApiResponse<CouponResult.IssuedCouponRegisterV1> issueCoupon(@RequestBody CouponRequest.IssuedCoupon couponRequest) {
+        CouponResult.IssuedCouponRegisterV1 couponResponse =   couponFacade.issueCoupon(couponRequest);
+        return CustomApiResponse.ok(CouponResponse.IssuedCouponRegisterV1.of(couponResponse), "쿠폰 발급에 성공했습니다.");
     }
 }
