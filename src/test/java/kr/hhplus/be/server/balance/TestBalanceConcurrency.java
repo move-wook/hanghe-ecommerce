@@ -7,6 +7,7 @@ import kr.hhplus.be.server.domain.balance.UserBalance;
 import kr.hhplus.be.server.domain.user.User;
 import kr.hhplus.be.server.infra.balance.JpaUserBalanceRepository;
 import kr.hhplus.be.server.infra.user.JpaUserRepository;
+import kr.hhplus.be.server.interfaces.balance.request.BalanceRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -54,7 +55,7 @@ public class TestBalanceConcurrency {
         long chargeAmount = 100L;
         int threadCount = 5;
 
-        BalanceInfo.BalanceRegisterV1 registerV1 = new BalanceInfo.BalanceRegisterV1(mockUserId, chargeAmount);
+        BalanceRequest.BalanceCharge registerV1 = new BalanceRequest.BalanceCharge(mockUserId, chargeAmount);
         ExecutorService executorService = Executors.newFixedThreadPool(20);
         CountDownLatch latch = new CountDownLatch(threadCount);
         for (int i = 0; i < threadCount; i++) {
