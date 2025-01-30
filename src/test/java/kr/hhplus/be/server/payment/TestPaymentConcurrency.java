@@ -27,6 +27,7 @@ import kr.hhplus.be.server.infra.payment.JpaPaymentRepository;
 import kr.hhplus.be.server.infra.product.JpaProductInventoryRepository;
 import kr.hhplus.be.server.infra.product.JpaProductRepository;
 import kr.hhplus.be.server.infra.user.JpaUserRepository;
+import kr.hhplus.be.server.interfaces.balance.request.BalanceRequest;
 import kr.hhplus.be.server.support.ErrorCode;
 import kr.hhplus.be.server.support.HangHeaException;
 import org.junit.jupiter.api.BeforeEach;
@@ -183,8 +184,9 @@ public class TestPaymentConcurrency {
         BigDecimal discountFactor = BigDecimal.ONE.subtract(discountRate); // 1 - 0.10 = 0.90
         BigDecimal discountedTotal = total.multiply(discountFactor).setScale(2, RoundingMode.HALF_UP);
         // 곱셈 수행
+        BalanceRequest.BalanceInfo info = new BalanceRequest.BalanceInfo(user.getId());
 
-        BalanceResult.BalanceRegisterV1 pointResponse = balanceFacade.getUserBalance(user.getId());
+        BalanceResult.BalanceRegisterV1 pointResponse = balanceFacade.getUserBalance(info);
 
         assertThat(userBalance.getCurrentBalance().subtract(discountedTotal)).isEqualTo(pointResponse.currentBalance());
         jpaProductRepository.delete(product);
