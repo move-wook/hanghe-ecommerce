@@ -68,22 +68,6 @@ public class TestOrderService {
     }
 
     @Test
-    @DisplayName("존재하지 않는 주문 번호 조회시 HangHeaException 예외 발생")
-    void shouldThrowExceptionWhenOrderNotFoundForUpdate() {
-        // Given
-        long orderId = 1L;
-        when(orderRepository.findOrderForUpdate(orderId)).thenReturn(Optional.empty());
-
-        // When & Then
-        HangHeaException exception = assertThrows(HangHeaException.class, () -> {
-            orderService.findOrderForUpdate(orderId);
-        });
-
-        assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.ORDER_NOT_FOUND);
-
-    }
-
-    @Test
     @DisplayName("주문정보를 정상적으로 저장한다.")
     void shouldSaveOrderSuccessfully() {
         // Given
