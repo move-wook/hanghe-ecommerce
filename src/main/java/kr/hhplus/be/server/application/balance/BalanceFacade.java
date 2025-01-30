@@ -19,16 +19,14 @@ public class BalanceFacade {
     private final UserService userService;
 
     public BalanceResult.BalanceRegisterV1 getUserBalance(BalanceRequest.BalanceInfo info) {
-        BalanceInfo.BalanceUserV1 balanceUserV1 = BalanceInfo.BalanceUserV1.from(info);
-        User user = userService.getUserById(balanceUserV1.userId());
+        User user = userService.getUserById(info.userId());
         UserBalance balance = balanceService.getByUserId(user.getId());
         return new BalanceResult.BalanceRegisterV1(user.getId(),  user.getUserName(), balance.getCurrentBalance());
     }
     @Transactional
-    public BalanceResult.BalanceRegisterV1 charge(BalanceRequest.BalanceCharge balanceRequest) {
-        BalanceInfo.BalanceRegisterV1 balanceUserV1 = BalanceInfo.BalanceRegisterV1.from(balanceRequest);
-        User user = userService.getUserById(balanceUserV1.userId());
-        UserBalance balance = balanceService.updateBalance(user.getId(), balanceUserV1.amount());
+    public BalanceResult.BalanceRegisterV1 charge(BalanceInfo.BalanceRegisterV1 info) {
+        User user = userService.getUserById(info.userId());
+        UserBalance balance = balanceService.updateBalance(user.getId(), info.amount());
         return new BalanceResult.BalanceRegisterV1(user.getId(), user.getUserName(), balance.getCurrentBalance());
     }
 }

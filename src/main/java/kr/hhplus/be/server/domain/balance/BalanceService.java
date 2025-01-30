@@ -34,7 +34,7 @@ public class BalanceService {
 
     @Transactional
     public void deductBalance(long userId, BigDecimal amount) {
-        UserBalance userBalance = this.getByUserId(userId);
+        UserBalance userBalance = userBalanceRepository.findByUserId(userId);
         // 잔액 차감
         userBalance.subBalance(amount);
         // 잔액 변경 내용 저장

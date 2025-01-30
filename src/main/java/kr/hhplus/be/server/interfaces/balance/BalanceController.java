@@ -60,7 +60,7 @@ public class BalanceController {
     )
     @PostMapping("/balance/charge")
     public CustomApiResponse<BalanceResponse.UserBalanceResponse> chargeBalance(@RequestBody BalanceRequest.BalanceCharge balanceCharge) {
-        BalanceResult.BalanceRegisterV1 response = balanceFacade.charge(balanceCharge);
+        BalanceResult.BalanceRegisterV1 response = balanceFacade.charge(BalanceRequest.BalanceCharge.from(balanceCharge));
         return CustomApiResponse.ok(BalanceResponse.UserBalanceResponse.of(response),  "잔액 충전 성공");
     }
 }

@@ -54,14 +54,13 @@ public class TestBalanceConcurrency {
 
         long chargeAmount = 100L;
         int threadCount = 5;
-
-        BalanceRequest.BalanceCharge registerV1 = new BalanceRequest.BalanceCharge(mockUserId, chargeAmount);
+        BalanceInfo.BalanceRegisterV1 info = new BalanceInfo.BalanceRegisterV1(mockUserId, chargeAmount);
         ExecutorService executorService = Executors.newFixedThreadPool(20);
         CountDownLatch latch = new CountDownLatch(threadCount);
         for (int i = 0; i < threadCount; i++) {
             executorService.submit(() -> {
                 try {
-                    balanceFacade.charge(registerV1);
+                    balanceFacade.charge(info);
                 }catch (Exception e){
                     e.printStackTrace();
                 }finally {
