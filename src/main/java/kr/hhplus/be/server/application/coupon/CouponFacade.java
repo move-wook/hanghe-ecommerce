@@ -1,13 +1,12 @@
 package kr.hhplus.be.server.application.coupon;
 
+import kr.hhplus.be.server.application.coupon.request.CouponInfo;
+import kr.hhplus.be.server.application.coupon.response.CouponResult;
 import kr.hhplus.be.server.domain.coupon.Coupon;
 import kr.hhplus.be.server.domain.coupon.CouponService;
 import kr.hhplus.be.server.domain.coupon.IssuedCoupon;
 import kr.hhplus.be.server.domain.user.User;
 import kr.hhplus.be.server.domain.user.UserService;
-import kr.hhplus.be.server.application.coupon.request.CouponInfo;
-import kr.hhplus.be.server.application.coupon.response.CouponResult;
-import kr.hhplus.be.server.interfaces.coupon.reqeust.CouponRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +22,7 @@ public class CouponFacade {
     private final UserService userService;
 
     @Transactional
-    public CouponResult.IssuedCouponRegisterV1 issueCoupon(CouponRequest.IssuedCoupon couponRequest) {
-
-        CouponInfo.CouponRegisterV1 couponRegisterV1 = CouponInfo.CouponRegisterV1.from(couponRequest);
+    public CouponResult.IssuedCouponRegisterV1 issueCoupon(CouponInfo.CouponRegisterV1 couponRegisterV1) {
         //사용자 검증
         User user = userService.getUserById(couponRegisterV1.userId());
         // 쿠폰 발급
@@ -35,8 +32,7 @@ public class CouponFacade {
                 user.getId());
     }
 
-    public List<CouponResult.CouponRegisterV1> getUserCoupons(CouponRequest.CouponInfo couponInfo) {
-        CouponInfo.UserCouponRegisterV1 userCouponRegisterV1 = CouponInfo.UserCouponRegisterV1.from(couponInfo);
+    public List<CouponResult.CouponRegisterV1> getUserCoupons(CouponInfo.UserCouponRegisterV1 userCouponRegisterV1) {
         User user = userService.getUserById(userCouponRegisterV1.userId());
         List<IssuedCoupon> coupons =  couponService.getByUserId(user.getId());
         return toCouponRegisterV1List(coupons);

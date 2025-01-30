@@ -15,15 +15,9 @@ public class CouponInfo {
             @Schema(description = "쿠폰 ID", example = "1")
             long couponId) {
 
-        public static CouponRegisterV1 from(CouponRequest.IssuedCoupon couponRequest) {
-            return new CouponRegisterV1(couponRequest.userId(), couponRequest.couponId());
-        }
     }
     public record UserCouponRegisterV1(
             @Schema(description = "사용자 ID", example = "1")long userId
             ) {
-        public static UserCouponRegisterV1 from(CouponRequest.CouponInfo couponInfo) {
-            return new UserCouponRegisterV1(couponInfo.userId());
-        }
     }
 }

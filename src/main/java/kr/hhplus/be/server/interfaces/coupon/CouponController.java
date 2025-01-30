@@ -37,7 +37,7 @@ public class CouponController {
             }
     )
     public CustomApiResponse<List<CouponResponse.CouponRegisterV1>>getUserCoupons(@PathVariable(name="userId") long userId) {
-        List<CouponResult.CouponRegisterV1> list = couponFacade.getUserCoupons(new CouponRequest.CouponInfo(userId));
+        List<CouponResult.CouponRegisterV1> list = couponFacade.getUserCoupons(CouponRequest.CouponUserInfo.from(userId));
         return CustomApiResponse.ok(CouponResponse.CouponRegisterV1.of(list), "쿠폰 목록 조회에 성공했습니다.");
     }
 
@@ -59,7 +59,7 @@ public class CouponController {
             }
     )
     public CustomApiResponse<CouponResult.IssuedCouponRegisterV1> issueCoupon(@RequestBody CouponRequest.IssuedCoupon couponRequest) {
-        CouponResult.IssuedCouponRegisterV1 couponResponse =   couponFacade.issueCoupon(couponRequest);
+        CouponResult.IssuedCouponRegisterV1 couponResponse =   couponFacade.issueCoupon(CouponRequest.IssuedCoupon.from(couponRequest));
         return CustomApiResponse.ok(CouponResponse.IssuedCouponRegisterV1.of(couponResponse), "쿠폰 발급에 성공했습니다.");
     }
 }
