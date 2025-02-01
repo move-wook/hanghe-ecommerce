@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.hhplus.be.server.application.balance.BalanceFacade;
 import kr.hhplus.be.server.application.balance.request.BalanceInfo;
 import kr.hhplus.be.server.application.balance.response.BalanceResult;
+import kr.hhplus.be.server.interfaces.balance.request.BalanceRequest;
+import kr.hhplus.be.server.interfaces.balance.response.BalanceResponse;
 import kr.hhplus.be.server.support.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -35,8 +37,9 @@ public class BalanceController {
     )
     @GetMapping("/balances/{userId}")
     @Parameter(name = "userId", description = "사용자 ID", example = "1")
-    public CustomApiResponse<BalanceResult.BalanceRegisterV1> getUserBalance(@PathVariable (name="userId") long userId) {
-        return CustomApiResponse.ok(balanceFacade.getUserBalance(userId), "잔액 조회에 성공했습니다.");
+    public CustomApiResponse<BalanceResponse.UserBalanceResponse> getUserBalance(@PathVariable (name="userId") long userId) {
+        BalanceResult.BalanceRegisterV1 response =  balanceFacade.getUserBalance(new BalanceRequest.BalanceInfo(userId));
+        return CustomApiResponse.ok(BalanceResponse.UserBalanceResponse.of(response), "잔액 조회에 성공했습니다.");
     }
 
     @Operation(
@@ -56,7 +59,8 @@ public class BalanceController {
             }
     )
     @PostMapping("/balance/charge")
-    public CustomApiResponse<BalanceResult.BalanceRegisterV2> chargeBalance(@RequestBody BalanceInfo.BalanceRegisterV1 balanceRequest) {
-        return CustomApiResponse.ok(balanceFacade.charge(balanceRequest),  "잔액 충전 성공");
+    public CustomApiResponse<BalanceResponse.UserBalanceResponse> chargeBalance(@RequestBody BalanceRequest.BalanceCharge balanceCharge) {
+        BalanceResult.BalanceRegisterV1 response = balanceFacade.charge(BalanceRequest.BalanceCharge.from(balanceCharge));
+        return CustomApiResponse.ok(BalanceResponse.UserBalanceResponse.of(response),  "잔액 충전 성공");
     }
 }

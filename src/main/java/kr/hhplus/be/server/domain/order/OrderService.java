@@ -39,11 +39,6 @@ public class OrderService {
         return order;
 
     }
-    @Transactional
-    public Order findOrderForUpdate(long orderId) {
-        return orderRepository.findOrderForUpdate(orderId)
-                .orElseThrow(() -> new HangHeaException(ErrorCode.ORDER_NOT_FOUND));
-    }
 
     public void updateStatus(Order order) {
         order.updateStatus(OrderStatus.COMPLETED);
@@ -62,7 +57,8 @@ public class OrderService {
 
     @Transactional
     public Order validateOrderNotCompleted(long orderId) {
-        Order order = this.findOrderForUpdate(orderId);
+        Order order = orderRepository.findOrderForUpdate(orderId)
+                .orElseThrow(() -> new HangHeaException(ErrorCode.ORDER_NOT_FOUND));
         order.validateNotCompleted();
         return order;
     }

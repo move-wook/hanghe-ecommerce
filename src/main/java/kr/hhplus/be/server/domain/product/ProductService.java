@@ -30,29 +30,30 @@ public class ProductService {
         return productRepository.getProductInventoryForUpdate(productId)
                 .orElseThrow(() -> new HangHeaException(ErrorCode.NOT_FOUND_PRODUCT));
     }
-
-
     public ProductInventory getProductInventory(long productId) {
         return productRepository.getProductInventory(productId)
                 .orElseThrow(() -> new HangHeaException(ErrorCode.NOT_FOUND_PRODUCT));
     }
     @Transactional
     public void decrementStock(long productId, long quantity) {
-        ProductInventory inventory = this.getProductInventoryForUpdate(productId);
-        inventory.subtractStock(quantity);  // 재고 차감 로직 호출
+        ProductInventory inventory = productRepository.getProductInventoryForUpdate(productId)
+                .orElseThrow(() -> new HangHeaException(ErrorCode.NOT_FOUND_PRODUCT));
+        inventory.subtractStock(quantity);
         productRepository.saveProductInventory(inventory);  // 차감된 재고 정보 저장
     }
     @Transactional
     public void validateAndDeductStock(List<OrderItem> orderItems) {
         for (OrderItem orderItem : orderItems) {
-            ProductInventory inventory = getProductInventoryForUpdate(orderItem.getProductId());
+            ProductInventory inventory = productRepository.getProductInventoryForUpdate(orderItem.getProductId())
+                    .orElseThrow(() -> new HangHeaException(ErrorCode.NOT_FOUND_PRODUCT));
             inventory.deductStock(orderItem.getQuantity()); // 엔티티의 메서드 호출
             productRepository.saveProductInventory(inventory); // 차감된 재고 저장
         }
     }
     @Transactional
     public void validateStockAvailability(long productId, long quantity)  {
-        ProductInventory inventory = getProductInventoryForUpdate(productId);
+        ProductInventory inventory = productRepository.getProductInventoryForUpdate(productId)
+                        .orElseThrow(() -> new HangHeaException(ErrorCode.NOT_FOUND_PRODUCT));
         inventory.validateStock(quantity); // 재고 검증만 수행
     }
 }

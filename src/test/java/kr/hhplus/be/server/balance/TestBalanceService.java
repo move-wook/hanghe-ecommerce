@@ -104,6 +104,9 @@ public class TestBalanceService {
                 .build();
 
 
+        when(userBalanceRepository.findByUserId(userId)).thenReturn(userBalance);
+
+
         HangHeaException exception1 = assertThrows(HangHeaException.class, () -> {
             balanceService.updateBalance(userId, 0);
         });

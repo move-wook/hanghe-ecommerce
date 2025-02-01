@@ -3,6 +3,7 @@ package kr.hhplus.be.server.coupon;
 import kr.hhplus.be.server.domain.coupon.Coupon;
 import kr.hhplus.be.server.domain.coupon.CouponService;
 import kr.hhplus.be.server.infra.coupon.JpaCouponRepository;
+import kr.hhplus.be.server.infra.coupon.JpaIssuedCouponRepository;
 import kr.hhplus.be.server.support.HangHeaException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.testcontainers.shaded.org.checkerframework.checker.units.qual.A;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -29,18 +31,15 @@ public class TestCouponConcurrency {
     private JpaCouponRepository jpaCouponRepository;
 
     @Autowired
+    private JpaIssuedCouponRepository jpaIssuedCouponRepository;
+
+    @Autowired
     private CouponService couponService;
-
-    @BeforeEach
-    void setup() {
-        jpaCouponRepository.deleteAll();
-    }
-
 
     @Test
     @DisplayName("최대 발급 가능한 쿠폰의 수의 사용자가 쿠폰을 발급한다.")
     void issueCouponMaxConcurrencyThrowsException() throws InterruptedException {
-        // given
+        jpaCouponRepository.deleteAll();
         Coupon coupon = Coupon.builder()
                 .name("항해8기 수강 10%할인")
                 .issuedCount(0)
@@ -51,8 +50,8 @@ public class TestCouponConcurrency {
                 .discountType("PERCENTAGE")
                 .minimumOrderAmount(BigDecimal.valueOf(10))
                 .build();
-        jpaCouponRepository.save(coupon);
-
+        coupon =  jpaCouponRepository.save(coupon);
+        // give
         int usersCount = 35;
         long couponId = coupon.getId();
 
@@ -80,7 +79,8 @@ public class TestCouponConcurrency {
         // then
         Coupon issuanceCount = couponService.findByCouponId(couponId);
         assertThat(issuanceCount.getLimitCount()).isEqualTo(coupon.getLimitCount());
-
+        jpaCouponRepository.deleteAll();
+        jpaIssuedCouponRepository.deleteAll();
     }
 
     @Test
@@ -136,5 +136,7 @@ public class TestCouponConcurrency {
 
         assertThat(exceptionCount).isEqualTo(5); // 초과 발급 시도한 5명에서 예외 발생
 
+        jpaCouponRepository.deleteAll();
+        jpaIssuedCouponRepository.deleteAll();
     }
 }

@@ -6,6 +6,7 @@ import kr.hhplus.be.server.domain.user.User;
 import kr.hhplus.be.server.domain.user.UserService;
 import kr.hhplus.be.server.application.balance.request.BalanceInfo;
 import kr.hhplus.be.server.application.balance.response.BalanceResult;
+import kr.hhplus.be.server.interfaces.balance.request.BalanceRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,16 +18,15 @@ public class BalanceFacade {
     private final BalanceService balanceService;
     private final UserService userService;
 
-
-    public BalanceResult.BalanceRegisterV1 getUserBalance(long userId) {
-        User user = userService.getUserById(userId);
+    public BalanceResult.BalanceRegisterV1 getUserBalance(BalanceRequest.BalanceInfo info) {
+        User user = userService.getUserById(info.userId());
         UserBalance balance = balanceService.getByUserId(user.getId());
         return new BalanceResult.BalanceRegisterV1(user.getId(),  user.getUserName(), balance.getCurrentBalance());
     }
     @Transactional
-    public BalanceResult.BalanceRegisterV2 charge(BalanceInfo.BalanceRegisterV1 balanceRequest) {
-        User user = userService.getUserById(balanceRequest.userId());
-        UserBalance balance = balanceService.updateBalance(user.getId(), balanceRequest.amount());
-        return new BalanceResult.BalanceRegisterV2(user.getId(), balance.getCurrentBalance());
+    public BalanceResult.BalanceRegisterV1 charge(BalanceInfo.BalanceRegisterV1 info) {
+        User user = userService.getUserById(info.userId());
+        UserBalance balance = balanceService.updateBalance(user.getId(), info.amount());
+        return new BalanceResult.BalanceRegisterV1(user.getId(), user.getUserName(), balance.getCurrentBalance());
     }
 }

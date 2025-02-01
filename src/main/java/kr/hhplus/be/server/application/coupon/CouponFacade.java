@@ -1,12 +1,12 @@
 package kr.hhplus.be.server.application.coupon;
 
+import kr.hhplus.be.server.application.coupon.request.CouponInfo;
+import kr.hhplus.be.server.application.coupon.response.CouponResult;
 import kr.hhplus.be.server.domain.coupon.Coupon;
 import kr.hhplus.be.server.domain.coupon.CouponService;
 import kr.hhplus.be.server.domain.coupon.IssuedCoupon;
 import kr.hhplus.be.server.domain.user.User;
 import kr.hhplus.be.server.domain.user.UserService;
-import kr.hhplus.be.server.application.coupon.request.CouponInfo;
-import kr.hhplus.be.server.application.coupon.response.CouponResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,18 +22,18 @@ public class CouponFacade {
     private final UserService userService;
 
     @Transactional
-    public CouponResult.IssuedCouponRegisterV1 issueCoupon(CouponInfo.CouponRegisterV1 couponRequest) {
+    public CouponResult.IssuedCouponRegisterV1 issueCoupon(CouponInfo.CouponRegisterV1 couponRegisterV1) {
         //사용자 검증
-        User user = userService.getUserById(couponRequest.userId());
+        User user = userService.getUserById(couponRegisterV1.userId());
         // 쿠폰 발급
-        IssuedCoupon issuedCoupon = couponService.issueCoupon(couponRequest.couponId(), user.getId());
+        IssuedCoupon issuedCoupon = couponService.issueCoupon(couponRegisterV1.couponId(), user.getId());
 
         return new CouponResult.IssuedCouponRegisterV1(issuedCoupon.getId(),
                 user.getId());
     }
 
-    public List<CouponResult.CouponRegisterV1> getUserCoupons(long userId) {
-        User user = userService.getUserById(userId);
+    public List<CouponResult.CouponRegisterV1> getUserCoupons(CouponInfo.UserCouponRegisterV1 userCouponRegisterV1) {
+        User user = userService.getUserById(userCouponRegisterV1.userId());
         List<IssuedCoupon> coupons =  couponService.getByUserId(user.getId());
         return toCouponRegisterV1List(coupons);
     }

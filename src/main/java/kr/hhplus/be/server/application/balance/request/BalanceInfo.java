@@ -15,5 +15,10 @@ public class BalanceInfo {
 
             @Schema(description = "충전할 금액", example = "5000")
                          long amount){
+
+    }
+    public record BalanceUserV1(
+            @Schema(description = "사용자 ID", example = "1")
+            long userId) {
     }
 }
