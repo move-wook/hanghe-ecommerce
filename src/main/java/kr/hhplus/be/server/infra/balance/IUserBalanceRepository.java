@@ -2,7 +2,6 @@ package kr.hhplus.be.server.infra.balance;
 
 import kr.hhplus.be.server.domain.balance.UserBalance;
 import kr.hhplus.be.server.domain.balance.UserBalanceRepository;
-import kr.hhplus.be.server.support.HangHeaException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
