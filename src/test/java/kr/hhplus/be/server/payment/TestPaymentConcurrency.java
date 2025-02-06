@@ -142,6 +142,7 @@ public class TestPaymentConcurrency {
                 .couponId(coupon.getId())
                 .createdAt(LocalDateTime.now())
                 .used(false)
+                .status("PENDING")
                 .build();
         issuedCoupon = jpaIssuedCouponRepository.save(issuedCoupon);
 
