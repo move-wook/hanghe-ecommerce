@@ -22,7 +22,15 @@ public class CouponFacade {
     private final UserService userService;
 
     @Transactional
-    public CouponResult.IssuedCouponRegisterV1 issueCoupon(CouponInfo.CouponRegisterV1 couponRegisterV1) {
+    public void requestCoupon(CouponInfo.CouponRegisterV1 couponRegisterV1) {
+        //사용자 검증
+        User user = userService.getUserById(couponRegisterV1.userId());
+        // 쿠폰 발급
+        couponService.requestCoupon(couponRegisterV1.couponId(), user.getId());
+    }
+
+    @Transactional
+    public CouponResult.IssuedCouponRegisterV1 issuedCoupon(CouponInfo.CouponRegisterV1 couponRegisterV1) {
         //사용자 검증
         User user = userService.getUserById(couponRegisterV1.userId());
         // 쿠폰 발급

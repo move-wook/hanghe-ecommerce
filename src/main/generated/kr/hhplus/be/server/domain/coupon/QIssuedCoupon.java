@@ -25,6 +25,8 @@ public class QIssuedCoupon extends EntityPathBase<IssuedCoupon> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final StringPath status = createString("status");
+
     public final BooleanPath used = createBoolean("used");
 
     public final DateTimePath<java.time.LocalDateTime> usedAt = createDateTime("usedAt", java.time.LocalDateTime.class);

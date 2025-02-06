@@ -31,6 +31,9 @@ public class IssuedCoupon {
     @Column(nullable = false)
     private boolean used;
 
+    @Column(nullable = false)
+    private String status;
+
     @Column
     private LocalDateTime usedAt;
 
@@ -48,6 +51,7 @@ public class IssuedCoupon {
         this.couponId = couponId;
         this.used = false;  // 초기값: 사용되지 않음
         this.usedAt = null; // 사용된 날짜는 없음
+        this.status = "PENDING";
     }
 
     // 비즈니스 로직
