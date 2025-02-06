@@ -6,6 +6,8 @@ import kr.hhplus.be.server.domain.product.ProductInventory;
 import kr.hhplus.be.server.domain.product.ProductService;
 import kr.hhplus.be.server.application.product.response.ProductPageResult;
 import kr.hhplus.be.server.application.product.response.ProductResult;
+import kr.hhplus.be.server.infra.cache.CacheService;
+import kr.hhplus.be.server.infra.order.ProductTopResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +23,7 @@ public class ProductFacade {
 
     private final ProductService productService;
     private final OrderService orderService;
+    private final CacheService cacheService;
 
     // 리스트 조회
     public ProductPageResult.ProductPageRegisterV1 listProducts(int page, int size, String sort) {
@@ -50,6 +53,14 @@ public class ProductFacade {
     }
 
     public List<ProductResult.ProductTopRegisterV1> getTopProductsBySales(int limit) {
+        String key = "topSellingProducts::" + limit;
+        List<ProductTopResult> topSellingProducts = cacheService.getTopSellingProductsFromCache(key);
+        if (topSellingProducts == null) {
+            topSellingProducts = orderService.findTopSellingProducts(limit);
+            cacheService.saveTopSellingProductsToCache(key, topSellingProducts);
+        } else {
+            cacheService.refreshCacheTTL(key);
+        }
         return orderService.findTopSellingProducts(limit).stream()
                 .map(result -> new ProductResult.ProductTopRegisterV1(
                         result.id(),
