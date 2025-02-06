@@ -35,7 +35,7 @@ public class CouponProcessorScheduler {
                 CompletableFuture<Void> future = couponProcessorService.processCouponRequests(couponId, userId);
 
                 // 비동기 작업 완료 후 처리
-                future.thenRun(() -> {});
+                future.thenRun(() -> {redisTemplate.opsForZSet().remove("coupon:queue", request);});
             }
         }
     }
