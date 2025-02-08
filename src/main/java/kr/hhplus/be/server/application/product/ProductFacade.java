@@ -61,7 +61,7 @@ public class ProductFacade {
         } else {
             cacheService.refreshCacheTTL(key);
         }
-        return orderService.findTopSellingProducts(limit).stream()
+        return topSellingProducts.stream()
                 .map(result -> new ProductResult.ProductTopRegisterV1(
                         result.id(),
                         result.name(),
