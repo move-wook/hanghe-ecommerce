@@ -16,6 +16,7 @@ import java.util.List;
 public class CouponService {
 
     private final CouponRepository couponRepository;
+    private final CouponRedisRepository couponRedisRepository;
 
     public List<IssuedCoupon> getByUserId(long userId) {
         return couponRepository.findAllByUserId(userId)
@@ -56,5 +57,11 @@ public class CouponService {
     public Coupon findByCouponId(long couponId) {
         return couponRepository.findByCouponId(couponId)
                 .orElseThrow(() -> new HangHeaException(ErrorCode.INVALID_COUPON));
+    }
+
+    public void issueCouponInRedis(long couponId, long userId) {
+        Coupon coupon = couponRepository.findByCouponId(couponId)
+                .orElseThrow(() -> new HangHeaException(ErrorCode.NOT_FOUND_USER_COUPON));
+        couponRedisRepository.issueCouponInRedis(coupon.getId(), userId, System.currentTimeMillis());
     }
 }

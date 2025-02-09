@@ -5,13 +5,11 @@ import kr.hhplus.be.server.domain.coupon.CouponService;
 import kr.hhplus.be.server.infra.coupon.JpaCouponRepository;
 import kr.hhplus.be.server.infra.coupon.JpaIssuedCouponRepository;
 import kr.hhplus.be.server.support.HangHeaException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.testcontainers.shaded.org.checkerframework.checker.units.qual.A;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

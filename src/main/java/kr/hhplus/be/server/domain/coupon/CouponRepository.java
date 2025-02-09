@@ -18,4 +18,5 @@ public interface CouponRepository {
     Optional<IssuedCoupon> findByIdAndUserId(long couponId, long userId);
 
     Optional<Coupon> findByCouponId(long couponId);
+
 }
