@@ -43,7 +43,13 @@ dependencies {
     annotationProcessor ("com.querydsl:querydsl-apt:5.0.0:jakarta")
     annotationProcessor ("jakarta.persistence:jakarta.persistence-api")
 
+    //Redis
+    implementation("org.springframework.boot:spring-boot-starter-data-redis") // Spring Data Redis
+    implementation("io.lettuce:lettuce-core:6.3.2.RELEASE")
 
+
+    // Spring Cache Starter
+    implementation("org.springframework.boot:spring-boot-starter-cache")
     // DB
 	runtimeOnly("com.mysql:mysql-connector-j")
 
@@ -52,6 +58,7 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-testcontainers")
 	testImplementation("org.testcontainers:junit-jupiter")
 	testImplementation("org.testcontainers:mysql")
+	testImplementation("org.springframework.boot:spring-boot-starter-data-redis")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
 }

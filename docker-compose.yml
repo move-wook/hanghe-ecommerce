@@ -1,4 +1,5 @@
 version: '3'
+
 services:
   mysql:
     image: mysql:8.0
@@ -11,7 +12,17 @@ services:
       - MYSQL_DATABASE=hhplus
     volumes:
       - ./data/mysql/:/var/lib/mysql
+    networks:
+      - app-network
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: [ "redis-server", "--appendonly", "yes" ] # AOF 영속성 활성화
+    networks:
+      - app-network
 
 networks:
-  default:
+  app-network: # 네트워크를 정의합니다
     driver: bridge

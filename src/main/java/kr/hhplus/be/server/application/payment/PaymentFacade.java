@@ -13,6 +13,8 @@ import kr.hhplus.be.server.domain.user.UserService;
 import kr.hhplus.be.server.external.EcommerceDataPlatform;
 import kr.hhplus.be.server.application.payment.request.PaymentInfo;
 import kr.hhplus.be.server.application.payment.response.PaymentResult;
+import kr.hhplus.be.server.infra.cache.CacheService;
+import kr.hhplus.be.server.infra.order.ProductTopResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,8 @@ public class PaymentFacade {
     private final PaymentService paymentService;
     //데이터 플랫폼 전송
     private final EcommerceDataPlatform ecommerceDataPlatform;
+    //캐시서비스
+    private final CacheService cacheService;
 
     @Transactional
     public PaymentResult.PaymentRegisterV1 processPayment(PaymentInfo.PaymentRegisterV1 paymentRequest){
@@ -78,6 +82,13 @@ public class PaymentFacade {
         paymentService.createPayment(payment);
 
         ecommerceDataPlatform.send();
+
+        //캐시업데이트?
+        List<ProductTopResult> updatedTopSellingProducts = orderService.findTopSellingProducts(5);
+
+        // 캐시 갱신 (새로운 값으로 캐시를 덮어씌움)
+        String key = "topSellingProducts::5";
+        cacheService.refreshTopSellingProductsCache(key,updatedTopSellingProducts);
 
         return new PaymentResult.PaymentRegisterV1(order.getId(), discountAmount.longValue(), OrderStatus.COMPLETED.toString());
     }
