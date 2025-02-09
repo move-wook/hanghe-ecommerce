@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("/api/v1")
+@RequestMapping("/api")
 @RestController
 @Tag(name = "CouponController", description = "쿠폰")
 @RequiredArgsConstructor
@@ -24,7 +24,7 @@ public class CouponController {
 
     private final CouponFacade couponFacade;
 
-    @GetMapping("/coupons/{userId}")
+    @GetMapping("/v1/coupons/{userId}")
     @Operation(
             summary = "쿠폰 조회",
             description = "사용자의 쿠폰목록을 조회힌다.",
@@ -41,7 +41,7 @@ public class CouponController {
         return CustomApiResponse.ok(CouponResponse.CouponRegisterV1.of(list), "쿠폰 목록 조회에 성공했습니다.");
     }
 
-    @PostMapping("/coupons/issue")
+    @PostMapping("/v1/coupons/issue")
     @Operation(
             summary = "선착순 쿠폰 발급",
             description = "쿠폰을 선착순으로 발급 한다.",
@@ -61,5 +61,10 @@ public class CouponController {
     public CustomApiResponse<CouponResult.IssuedCouponRegisterV1> issueCoupon(@RequestBody CouponRequest.IssuedCoupon couponRequest) {
         CouponResult.IssuedCouponRegisterV1 couponResponse =   couponFacade.issueCoupon(CouponRequest.IssuedCoupon.from(couponRequest));
         return CustomApiResponse.ok(CouponResponse.IssuedCouponRegisterV1.of(couponResponse), "쿠폰 발급에 성공했습니다.");
+    }
+
+    @PostMapping("/v2/coupons/issue")
+    public CustomApiResponse<CouponResult.IssuedCouponRegisterV2> issueCouponInRedis(@RequestBody CouponRequest.IssuedCoupon couponRequest) {
+       return CustomApiResponse.ok(couponFacade.issueCouponInRedis(CouponRequest.IssuedCoupon.from(couponRequest)), "쿠폰 발급에 성공했습니다.");
     }
 }

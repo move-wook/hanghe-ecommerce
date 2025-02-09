@@ -7,6 +7,7 @@ import kr.hhplus.be.server.domain.coupon.CouponService;
 import kr.hhplus.be.server.domain.coupon.IssuedCoupon;
 import kr.hhplus.be.server.domain.user.User;
 import kr.hhplus.be.server.domain.user.UserService;
+import kr.hhplus.be.server.support.HangHeaException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,5 +54,13 @@ public class CouponFacade {
         );
     }
 
+    public CouponResult.IssuedCouponRegisterV2 issueCouponInRedis(CouponInfo.CouponRegisterV1 issuedCoupon) {
+        User user = userService.getUserById(issuedCoupon.userId());
+        try{
+            couponService.issueCouponInRedis(issuedCoupon.couponId(), user.getId());
+        }catch (HangHeaException e){
 
+        }
+        return new CouponResult.IssuedCouponRegisterV2("쿠폰발급을 요청했습니다");
+    }
 }

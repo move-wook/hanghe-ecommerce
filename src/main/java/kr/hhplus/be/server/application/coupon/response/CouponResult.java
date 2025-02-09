@@ -4,4 +4,5 @@ public class CouponResult {
     public record CouponRegisterV1(long issuedCouponId, String name,String status,String validUntil){
     }
     public record IssuedCouponRegisterV1(long issuedCouponId, long userId){}
+    public record IssuedCouponRegisterV2(String msg){}
 }
