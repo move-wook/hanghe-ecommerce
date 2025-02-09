@@ -1,6 +1,7 @@
 package kr.hhplus.be.server;
 
 import jakarta.annotation.PreDestroy;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -8,8 +9,7 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
-import java.util.List;
-
+@Slf4j
 @Configuration
 class TestcontainersConfiguration {
 
@@ -20,7 +20,9 @@ class TestcontainersConfiguration {
 		MYSQL_CONTAINER = new MySQLContainer<>(DockerImageName.parse("mysql:8.0"))
 				.withDatabaseName("hhplus")
 				.withUsername("test")
-				.withPassword("test");
+				.withPassword("test")
+						.withExposedPorts(3306);
+
 		MYSQL_CONTAINER.start();
 
 		System.setProperty("spring.datasource.url", MYSQL_CONTAINER.getJdbcUrl() + "?characterEncoding=UTF-8&serverTimezone=UTC");
@@ -29,20 +31,21 @@ class TestcontainersConfiguration {
 
 		// Redis 컨테이너 설정
 		REDIS_CONTAINER = new GenericContainer<>(DockerImageName.parse("redis:latest"))
-				.withExposedPorts(6379);
-
-		REDIS_CONTAINER.setPortBindings(List.of("6379:6379"));
+				.withExposedPorts(6379); // 기본 6379 대신 16379 사용
 
 		REDIS_CONTAINER.start();
 	}
 
 	@DynamicPropertySource
 	static void registerRedisProperties(DynamicPropertyRegistry registry) {
-		String redisHost = REDIS_CONTAINER.getHost();
-		Integer redisPort = REDIS_CONTAINER.getFirstMappedPort();
+		registry.add("spring.datasource.url",
+				() -> "jdbc:mysql://" + MYSQL_CONTAINER.getHost() + ":" + MYSQL_CONTAINER.getFirstMappedPort() + "/hhplus?characterEncoding=UTF-8&serverTimezone=UTC");
+		registry.add("spring.datasource.username", MYSQL_CONTAINER::getUsername);
+		registry.add("spring.datasource.password", MYSQL_CONTAINER::getPassword);
 
-		registry.add("spring.data.redis.host", () -> redisHost);
-		registry.add("spring.data.redis.port", () -> redisPort);
+		// Redis 동적 포트 적용
+		registry.add("spring.data.redis.host", REDIS_CONTAINER::getHost);
+		registry.add("spring.data.redis.port", REDIS_CONTAINER::getFirstMappedPort);
 	}
 
 
