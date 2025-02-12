@@ -2,8 +2,8 @@
 INSERT INTO `user` (id, user_name, created_at, updated_at) VALUES
     (1, '임동욱', '2025-01-05 13:52:36', '2025-01-05 13:52:36');
 
-INSERT INTO `user_balance` (id, user_id,version,current_balance, last_updated) VALUES
-    (1, 1,0,0.00, '2025-01-05 13:52:36');
+/*INSERT INTO `user_balance` (id, user_id,version,current_balance, last_updated) VALUES
+    (1, 1,0,0.00, '2025-01-05 13:52:36');*/
 
 INSERT INTO product (name,description,price,created_at) VALUES
 ('티셔츠','부드럽고 편안한 면 티셔츠',19900,'2025-01-05 05:38:09'),

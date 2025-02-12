@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.order;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.hhplus.be.server.application.coupon.request.CouponInfo;
 import kr.hhplus.be.server.application.order.request.OrderInfo;
+import kr.hhplus.be.server.infra.order.JpaOrderRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +28,10 @@ public class TestOrderIntegration {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private JpaOrderRepository orderRepository;
+
 
     @Test
     @DisplayName("티셔츠 5장을 주문요청한다.")
