@@ -46,7 +46,7 @@ public class IOrderRepository implements OrderRepository {
                 .from(orderItem)
                 .join(product).on(orderItem.productId.eq(product.id)) // FK로 조인
                 .join(order).on(orderItem.orderId.eq(order.id)) // FK로 조인
-                .where(order.createdAt.after(threeDaysAgo)) // 최근 3일 조건 추가
+                .where(order.createdAt.after(threeDaysAgo).and(order.status.eq(OrderStatus.valueOf("COMPLETED")))) // 최근 3일 조건 추가
                 .groupBy(product.id, product.name)
                 .orderBy(orderItem.quantity.sum().desc())
                 .limit(limit) // 상위 5개 제한
