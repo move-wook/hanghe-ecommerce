@@ -3,7 +3,6 @@ version: '3'
 services:
   mysql:
     image: mysql:8.0
-    container_name: mysql_main
     ports:
       - "3306:3306"
     environment:
@@ -15,22 +14,6 @@ services:
       - ./data/mysql/:/var/lib/mysql
     networks:
       - app-network
-
-  mysql_test:
-    image: mysql:8.0
-    container_name: mysql_test
-    ports:
-      - "3307:3307"  # 테스트 DB의 포트를 3307로 설정 (메인과 충돌 방지)
-    environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_USER=test_user
-      - MYSQL_PASSWORD=test_passwordd
-      - MYSQL_DATABASE=hhplus_test  # 테스트용 DB 이름
-    volumes:
-      - ./data/mysql_test/:/var/lib/mysql
-    networks:
-      - app-network
-
   redis:
     image: redis:latest
     container_name: redis
@@ -41,5 +24,5 @@ services:
       - app-network
 
 networks:
-  app-network:
+  app-network: # 네트워크를 정의합니다
     driver: bridge
