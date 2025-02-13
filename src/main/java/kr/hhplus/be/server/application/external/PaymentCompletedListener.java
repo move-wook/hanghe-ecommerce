@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.infra.external;
+package kr.hhplus.be.server.application.external;
 
 import kr.hhplus.be.server.external.EcommerceDataPlatform;
 import kr.hhplus.be.server.external.PaymentCompletedEvent;
