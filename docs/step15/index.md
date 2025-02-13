@@ -92,6 +92,25 @@ MySQL에서 사용되는 주요 인덱스 유형은 다음과 같다.
 ## 인덱스 적용 시나리오 (상위 상품 조회)
 ## 다른 단순 시나리오에 비해 조인쿼리등을 사용하고 있어서 적절하다고 판단
 
+```sql
+
+explain analyze
+SELECT 
+    p.id AS product_id, 
+    p.name AS product_name, 
+    SUM(oi.quantity) AS total_sold
+FROM order_item oi
+JOIN product p ON oi.product_id = p.id
+JOIN `order` o ON oi.order_id = o.id
+WHERE o.created_at BETWEEN (NOW() - INTERVAL 3 DAY) AND NOW()
+AND o.status = 'COMPLETED'
+GROUP BY p.id, p.name
+ORDER BY total_sold DESC
+limit 5;
+
+```
+
+
 ## 주문300만, 주문아이템 테이블에 각 800만건에 더미 데이터를 넣어서 테스트를 진행합니다.
 ## 각 로컬 환경은 다르 생각하여 많은 더미데이터로 하려하였으나 부하가 심해 소량에 데이터 진행하게 되었습니디
 ```sql
