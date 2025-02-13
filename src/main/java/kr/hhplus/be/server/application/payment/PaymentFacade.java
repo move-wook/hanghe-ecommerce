@@ -13,10 +13,12 @@ import kr.hhplus.be.server.domain.user.UserService;
 import kr.hhplus.be.server.external.EcommerceDataPlatform;
 import kr.hhplus.be.server.application.payment.request.PaymentInfo;
 import kr.hhplus.be.server.application.payment.response.PaymentResult;
+import kr.hhplus.be.server.external.PaymentCompletedEvent;
 import kr.hhplus.be.server.infra.cache.CacheService;
 import kr.hhplus.be.server.infra.order.ProductTopResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,6 +46,8 @@ public class PaymentFacade {
     private final EcommerceDataPlatform ecommerceDataPlatform;
     //캐시서비스
     private final CacheService cacheService;
+    //이벤트 호출
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public PaymentResult.PaymentRegisterV1 processPayment(PaymentInfo.PaymentRegisterV1 paymentRequest){
@@ -81,8 +85,8 @@ public class PaymentFacade {
         );
         paymentService.createPayment(payment);
 
-        ecommerceDataPlatform.send();
-
+        //ecommerceDataPlatform.send();
+        eventPublisher.publishEvent(new PaymentCompletedEvent(order.getId(), user.getId(), totalAmount.longValue(), payment.getId()));
         //캐시업데이트?
         List<ProductTopResult> updatedTopSellingProducts = orderService.findTopSellingProducts(5);
 
