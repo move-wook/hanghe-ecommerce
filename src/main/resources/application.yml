@@ -25,9 +25,6 @@ spring:
     redis:
       host: localhost
       port: 6379
-
-
-
 ---
 spring.config.activate.on-profile: local, test
 
