@@ -4,10 +4,8 @@ import kr.hhplus.be.server.external.EcommerceDataPlatform;
 import kr.hhplus.be.server.external.PaymentCompletedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 @Slf4j
 @Component
@@ -16,8 +14,7 @@ public class PaymentCompletedListener {
 
     private final EcommerceDataPlatform ecommerceDataPlatform;
 
-    @Async
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @EventListener
     public void handlePaymentCompleted(PaymentCompletedEvent event) {
         ecommerceDataPlatform.send(event);
     }

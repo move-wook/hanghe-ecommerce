@@ -40,32 +40,6 @@ services:
     networks:
       - app-network
 
-
-  zookeeper:
-    image: wurstmeister/zookeeper
-    container_name: zookeeper
-    ports:
-      - "2181:2181"
-    networks:
-      - app-network
-
-  kafka:
-    image: wurstmeister/kafka:2.12-2.5.0
-    container_name: kafka
-    ports:
-      - "9092:9092"
-      - "29092:29092"  # 외부에서 접근할 수 있도록 추가
-    environment:
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - app-network
-
 networks:
   app-network:
     driver: bridge

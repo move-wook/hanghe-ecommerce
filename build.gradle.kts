@@ -47,14 +47,13 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-redis") // Spring Data Redis
     implementation("io.lettuce:lettuce-core:6.3.2.RELEASE")
 
-    implementation("org.springframework.kafka:spring-kafka")
+
     // Spring Cache Starter
     implementation("org.springframework.boot:spring-boot-starter-cache")
     // DB
 	runtimeOnly("com.mysql:mysql-connector-j")
 
     // Test
-    testImplementation("org.testcontainers:kafka:1.19.3")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.boot:spring-boot-testcontainers")
 	testImplementation("org.testcontainers:junit-jupiter")
