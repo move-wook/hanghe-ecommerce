@@ -19,6 +19,11 @@ public class PaymentCompletedListener {
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handlePaymentCompleted(PaymentCompletedEvent event) {
-        ecommerceDataPlatform.send(event);
+        try{
+            log.info("결제 완료 이벤트 수신 확인 - paymentId: {}, orderId: {}", event.paymentId(), event.orderId());
+            ecommerceDataPlatform.send(event);
+        } catch (Exception e){
+            log.error("결제 데이터 처리 중 오류 발생", e);
+        }
     }
 }
