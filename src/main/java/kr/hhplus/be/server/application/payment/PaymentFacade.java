@@ -1,19 +1,21 @@
 package kr.hhplus.be.server.application.payment;
 
+import kr.hhplus.be.server.application.payment.request.PaymentInfo;
+import kr.hhplus.be.server.application.payment.response.PaymentResult;
 import kr.hhplus.be.server.domain.balance.BalanceService;
 import kr.hhplus.be.server.domain.coupon.Coupon;
 import kr.hhplus.be.server.domain.coupon.CouponService;
 import kr.hhplus.be.server.domain.coupon.IssuedCoupon;
-import kr.hhplus.be.server.domain.order.*;
+import kr.hhplus.be.server.domain.order.Order;
+import kr.hhplus.be.server.domain.order.OrderItem;
+import kr.hhplus.be.server.domain.order.OrderService;
+import kr.hhplus.be.server.domain.order.OrderStatus;
+import kr.hhplus.be.server.domain.order.event.OrderEvent;
 import kr.hhplus.be.server.domain.payment.Payment;
 import kr.hhplus.be.server.domain.payment.PaymentService;
 import kr.hhplus.be.server.domain.product.ProductService;
 import kr.hhplus.be.server.domain.user.User;
 import kr.hhplus.be.server.domain.user.UserService;
-import kr.hhplus.be.server.external.EcommerceDataPlatform;
-import kr.hhplus.be.server.application.payment.request.PaymentInfo;
-import kr.hhplus.be.server.application.payment.response.PaymentResult;
-import kr.hhplus.be.server.external.PaymentCompletedEvent;
 import kr.hhplus.be.server.infra.cache.CacheService;
 import kr.hhplus.be.server.infra.order.ProductTopResult;
 import lombok.RequiredArgsConstructor;
@@ -42,12 +44,10 @@ public class PaymentFacade {
     private final BalanceService balanceService;
     //결제 테이블
     private final PaymentService paymentService;
-    //데이터 플랫폼 전송
-    private final EcommerceDataPlatform ecommerceDataPlatform;
     //캐시서비스
     private final CacheService cacheService;
     //이벤트 호출
-    private final ApplicationEventPublisher eventPublisher;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     public PaymentResult.PaymentRegisterV1 processPayment(PaymentInfo.PaymentRegisterV1 paymentRequest){
@@ -85,8 +85,7 @@ public class PaymentFacade {
         );
         paymentService.createPayment(payment);
 
-        //ecommerceDataPlatform.send();
-        eventPublisher.publishEvent(new PaymentCompletedEvent(order.getId(), user.getId(), totalAmount.longValue(), payment.getId()));
+        applicationEventPublisher.publishEvent(new OrderEvent(order.getId(), user.getId(), totalAmount.longValue(), payment.getId()));
         //캐시업데이트?
         List<ProductTopResult> updatedTopSellingProducts = orderService.findTopSellingProducts(5);
 
