@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.application.external;
 
+import kr.hhplus.be.server.domain.order.event.OrderEvent;
 import kr.hhplus.be.server.external.EcommerceDataPlatform;
 import kr.hhplus.be.server.external.PaymentCompletedEvent;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class PaymentCompletedListener {
 
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void handlePaymentCompleted(PaymentCompletedEvent event) {
+    public void handlePaymentCompleted(OrderEvent event) {
         try{
             log.info("결제 완료 이벤트 수신 확인 - paymentId: {}, orderId: {}", event.paymentId(), event.orderId());
             ecommerceDataPlatform.send(event);

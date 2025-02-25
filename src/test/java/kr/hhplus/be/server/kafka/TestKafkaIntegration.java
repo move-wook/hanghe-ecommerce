@@ -10,6 +10,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 
 import java.time.Duration;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,27 +21,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TestKafkaIntegration {
 
     private static final String TOPIC_NAME = "test-topic";
-    private static final String BOOTSTRAP_SERVERS = "localhost:9092";
-    private static final AtomicReference<String> receivedMessage = new AtomicReference<>();
+    private static final LinkedBlockingQueue<String> messageQueue = new LinkedBlockingQueue<>();
 
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
 
     @KafkaListener(topics = TOPIC_NAME, groupId = "test-group")
     public void listen(String message) {
-        log.info("✅ Received message: {}", message);
-        receivedMessage.set(message);
+
+        messageQueue.offer(message);
     }
 
     @Test
-    void testKafkaProducerConsumer() {
+    void testKafkaProducerConsumer() throws InterruptedException {
         // 메시지 전송
         kafkaTemplate.send(TOPIC_NAME, "Hello Kafka!");
-        log.info("✅ Kafka message sent");
 
-        // waitility를 이용해 메시지 도착을 기다림 (최대 5초)
-        Awaitility.await()
-                .atMost(Duration.ofSeconds(5))
-                .untilAsserted(() -> assertThat(receivedMessage.get()).isEqualTo("Hello Kafka!"));
+
+        // 메시지 수신 대기
+        String receivedMessage = messageQueue.poll(5, TimeUnit.SECONDS);
+        assertThat(receivedMessage).isEqualTo("Hello Kafka!");
     }
 }
