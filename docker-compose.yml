@@ -70,6 +70,44 @@ services:
       - app-network
     depends_on:
       - zookeeper
+  influxdb:
+    image: influxdb:1.8
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    environment:
+      - INFLUXDB_DB=k6
+    volumes:
+      - influxdb-data:/var/lib/influxdb
+    networks:
+      - app-network
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - influxdb
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - app-network
+
+  k6:
+    image: grafana/k6
+    container_name: k6
+    volumes:
+      - ./docs/k6:/k6  # IntelliJ 프로젝트의 docs/k6 폴더를 컨테이너 내부의 /k6 디렉토리로 마운트
+    entrypoint: ["sh", "-c", "sleep infinity"]  # 컨테이너가 종료되지 않고 대기 상태 유지
+    depends_on:
+      - influxdb
+    networks:
+      - app-network
+
+volumes:
+  influxdb-data:
+  grafana-data:
 
 networks:
   app-network:
